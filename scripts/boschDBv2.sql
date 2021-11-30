@@ -524,3 +524,12 @@ BEGIN
     CLOSE @MyCursor2 ;
     DEALLOCATE @MyCursor2;
 END;
+GO
+------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------REMOÇÃO DAS TABELAS DE CSV---------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------
+DROP TABLE projetoBosch.dbo.CestaSeca$;
+DROP TABLE projetoBosch.dbo.CestaFria$;
+DROP TABLE projetoBosch.dbo.PresenteBosch$;
+DROP TABLE projetoBosch.dbo.MaterialEscolar$;
+DROP TABLE projetoBosch.dbo.Brinquedos$;
