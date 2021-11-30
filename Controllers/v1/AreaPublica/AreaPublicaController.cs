@@ -36,7 +36,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaPublica
         {
             var direitos = await _business.BuscarMeusDireitosAsync(request);
             var erros = _business.BuscarErros();
-            return (erros == null) ? Ok(_mapper.Map<DireitoResponse>(direitos)) : BadRequest(erros);
+            return (erros == null) ? Ok(_mapper.Map<List<DireitoResponse>>(direitos)) : BadRequest(erros);
         }
     }
 }

@@ -40,7 +40,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.Autenticacao
         public async Task<IActionResult> Login([FromBody] LoginUserRequest model)
         {
             var user = await _db.Colaborador.Include(c => c.Permissao).ThenInclude(p => p.TipoPermissao).AsSplitQuery()
-                .Where(c => c.Cpf == model.Cpf && c.DataNascimento.Value.Date == model.DataNascimento.Value.Date).FirstOrDefaultAsync();
+                .Where(c => c.Cpf == model.Cpf && c.DataNascimento.Value.Date == model.DataNascimento.Value.Date && c.UnidadeOrganizacionalId != null).FirstOrDefaultAsync();
 
             if (user != null)
             {
@@ -69,7 +69,10 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.Autenticacao
                 return Ok(new TokenResponse
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    Expiration = token.ValidTo
+                    Expiration = token.ValidTo,
+                    NomeCompleto = user.NomeCompleto,
+                    id = user.Id,
+                    Cargos = user.Permissao.Select(p => p.TipoPermissao.Descricao).ToList(),
                 });
             }
             return Unauthorized(new ErrorResponse("Login ou senha invalido"));
