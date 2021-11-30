@@ -120,7 +120,6 @@ ROWTERMINATOR = '\n'
 CREATE TABLE projetoBosch.dbo.tipoPermissao (
     id int identity(1,1),
     descricao nvarchar(255) not null,
-	EDV varchar(8) unique,
 	descricaNormalizada as cast(upper(rtrim(ltrim(descricao))) as nvarchar(255)),
 	constraint pk_tipoPermissao_id primary key(id)
 );
@@ -154,7 +153,8 @@ CREATE TABLE projetoBosch.dbo.colaborador (
 	dataNascimento date,
 	unidadeOrganizacionalID int,
 	constraint pk_colaborador_id primary key(id),
-	constraint fk_colaborador_unidadeOrganizacionalID foreign key(unidadeOrganizacionalID) references unidadeOrganizacional(id)
+	constraint fk_colaborador_unidadeOrganizacionalID foreign key(unidadeOrganizacionalID) references unidadeOrganizacional(id),
+	EDV as cast(upper(rtrim(ltrim(id+55555))) as varchar(10))
 );
 
 INSERT INTO projetoBosch.dbo.colaborador(cpf, nomeCompleto, dataNascimento,unidadeOrganizacionalID)
