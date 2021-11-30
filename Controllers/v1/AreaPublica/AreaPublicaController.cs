@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using BoschCartaoDigitalBackEnd.Models.v1.Responses.AreaPublica;
+using System.Linq;
 
 namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaPublica
 {
@@ -25,18 +27,20 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaPublica
         }
 
         /// <summary>
-        /// Busca os direitos relacionados a um colaborador.
+        /// Busca os direitos relacionados a um colaborador, seus direitos como direitos indicados.
         /// </summary>
         /// <param name="request">Parametros necessários para a busca</param>
         [AllowAnonymous]
         [HttpGet("buscar-direitos")]
-        [ProducesResponseType(typeof(List<DireitoResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DireitosPorColaboradorAgrupadosResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BuscarDireitos([FromQuery] MeusBeneficiosRequest request)
         {
-            var direitos = await _business.BuscarMeusDireitosAsync(request);
+            var resposta = await _business.BuscarListaDireitosCompletaAsync(request);
             var erros = _business.BuscarErros();
-            return (erros == null) ? Ok(_mapper.Map<List<DireitoResponse>>(direitos)) : BadRequest(erros);
+            return (erros == null) ? Ok(_mapper.Map<DireitosPorColaboradorAgrupadosResponse>(resposta)) : BadRequest(erros);
         }
+
+        
     }
 }

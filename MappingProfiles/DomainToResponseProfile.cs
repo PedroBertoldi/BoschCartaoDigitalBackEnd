@@ -1,18 +1,22 @@
 using AutoMapper;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
+using BoschCartaoDigitalBackEnd.Models.v1.Responses.AreaPublica;
 using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
 
 namespace BoschCartaoDigitalBackEnd.MappingProfiles
 {
-    public class DomaniToResponseProfile : Profile
+    public class DomainToResponseProfile : Profile
     {
-        public DomaniToResponseProfile()
+        public DomainToResponseProfile()
         {
             CreateMap<Direito, DireitoResponse>();
             CreateMap<Colaborador, ColaboradorResponse>();
             CreateMap<Beneficio, BeneficioResponse>();
             CreateMap<Evento, EventoResponse>();
             CreateMap<UnidadeOrganizacional, UnidadeOrganizacionalResponse>();
+            CreateMap<Direito, DireitoInfoReduzidaResponse>();
+            CreateMap<DireitosPorColaboradorAgrupados, DireitosPorColaboradorAgrupadosResponse>();
         }
     }
 }
