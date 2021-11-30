@@ -20,6 +20,7 @@ CREATE TABLE projetoBosch.dbo.colaborador (
 	cpf varchar(11) not null,
 	nomeCompleto nvarchar(255),
 	dataNascimento date,
+	EDV varchar(8) unique,
 	unidadeOrganizacionalID int,
 	constraint pk_colaborador_id primary key(id),
 	constraint fk_colaborador_unidadeOrganizacionalID foreign key(unidadeOrganizacionalID) references unidadeOrganizacional(id)
