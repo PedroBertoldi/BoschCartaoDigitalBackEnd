@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,8 +38,20 @@ namespace BoschCartaoDigitalBackEnd
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(Startup));
-            
-            services.AddDbContext<ProjetoBoschContext>(opt => {
+
+            services.AddCors(options =>
+              {
+                  options.AddPolicy(
+                    "CorsPolicy",
+                    builder => builder.WithOrigins("http://localhost:4200")
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+              });
+
+
+            services.AddDbContext<ProjetoBoschContext>(opt =>
+            {
                 opt.UseSqlServer(Configuration.GetConnectionString("ProjetoBoschContext"));
             });
 
@@ -140,6 +153,10 @@ namespace BoschCartaoDigitalBackEnd
                     c.RoutePrefix = "";
                 });
             }
+
+            app.UseCors("CorsPolicy");
+
+
 
             app.UseHttpsRedirection();
 
