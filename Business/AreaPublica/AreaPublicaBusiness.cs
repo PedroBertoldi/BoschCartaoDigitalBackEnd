@@ -11,6 +11,7 @@ using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
 using System.Collections.Generic;
 using BoschCartaoDigitalBackEnd.Business.Commom;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica;
+using BoschCartaoDigitalBackEnd.Exceptions.AreaPublica;
 
 namespace BoschCartaoDigitalBackEnd.Business.AreaPublica
 {
@@ -23,130 +24,169 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaPublica
             _repository = repository;
         }
 
-        public async Task<Evento> BuscarEventoAsync(int? eventoId)
+        /// <summary>
+        /// Busca o primeiro evento ativou ou o evento com o id informado.
+        /// </summary>
+        /// <param name="eventoId">id do evento a ser procurado ou nulo para o primeiro ativo</param>
+        private async Task<Evento> BuscarEventoAsync(int? eventoId)
         {
             var evento = (eventoId == null) ? await _repository.BuscarEventoAtivoAsync()
                 : await _repository.BuscarEventoPorIdAsync((int)eventoId);
-            return evento;
-        }
 
-        public async Task<DireitosPorColaboradorAgrupados> BuscarListaDireitosCompletaAsync(MeusBeneficiosRequest request)
-        {
-            DireitosPorColaboradorAgrupados resposta = default;
-            var evento = await BuscarEventoAsync(request.EventoID);
             if (evento == null)
             {
                 _errors.Add(new ErrorModel
                 {
-                    FieldName = nameof(request.EventoID),
-                    Message = (request.EventoID == null) ? "Atualmente não existe nem um evento ativo"
-                        : $"Não foi encontrado nem um evento com o id: {request.EventoID}",
+                    FieldName = nameof(eventoId),
+                    Message = (eventoId == null) ? "Atualmente não existe nem um evento ativo"
+                        : $"Não foi encontrado nem um evento com o id: {eventoId}",
                 });
-                return null;
+                throw new OperacaoInvalidaException();
             }
+            return evento;
+        }
 
-            var colaborador = await _repository.BuscarColaboradorAsync(request.Cpf, request.DataNascimento.Value);
+        /// <summary>
+        /// Busca um colaborador por CPF e data de nascimento.
+        /// </summary>
+        /// <param name="cpf"></param>
+        /// <param name="dataNascimento"></param>
+        /// <returns></returns>
+        private async Task<Colaborador> BuscarColaboradorAsync(string cpf, DateTime dataNascimento)
+        {
+            var colaborador = await _repository.BuscarColaboradorAsync(cpf, dataNascimento);
             if (colaborador == null)
             {
                 _errors.Add(new ErrorModel
                 {
-                    FieldName = nameof(request.Cpf),
+                    FieldName = nameof(cpf),
                     Message = "Usuário não encontrado"
                 });
+                throw new OperacaoInvalidaException();
+            }
+            return colaborador;
+        }
+
+        /// <summary>
+        /// Busca um colaborador por seu ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
+        {
+            var colaborador = await _repository.BuscarColaboradorPorIdAsync(id);
+            if (colaborador == null)
+            {
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(id),
+                    Message = $"Não foi encontrado um colaborador com o ID: {id}",
+                });
+                throw new OperacaoInvalidaException();
+            }
+            return colaborador;
+        }
+
+        /// <summary>
+        /// Busca todos os direitos de um colaborador e os direitos de outros colaboradores que o indicaram para retirada.
+        /// </summary>
+        /// <param name="request">Parametros necessários</param>
+        /// <returns></returns>
+        public async Task<DireitosPorColaboradorAgrupados> BuscarListaDireitosCompletaAsync(MeusBeneficiosRequest request)
+        {
+            DireitosPorColaboradorAgrupados resposta = default;
+            try
+            {
+                var evento = await BuscarEventoAsync(request.EventoID);
+                var colaborador = await BuscarColaboradorAsync(request.Cpf, request.DataNascimento.Value);
+                var direitos = await BuscarMeusDireitosAsync(evento.Id, colaborador.Id);
+                var indicados = await _repository.BuscarDireitosIndicadosAsync(evento.Id, colaborador.Id);
+                if (direitos.Count > 0 || indicados.Count > 0)
+                {
+                    resposta = new DireitosPorColaboradorAgrupados
+                    {
+                        Colaborador = colaborador,
+                        Evento = evento,
+                        Direitos = direitos,
+                        Indicacoes = indicados.GroupBy(i => i.ColaboradorId).ToList().Select(g => new DireitosPorColaboradorAgrupados
+                        {
+                            Colaborador = g.First().Colaborador,
+                            Evento = evento,
+                            Direitos = g.ToList(),
+                        }).ToList(),
+                    };
+                }
+            }
+            catch (OperacaoInvalidaException)
+            {
                 return null;
             }
-
-            var direitos = await BuscarMeusDireitosAsync(evento.Id, colaborador.Id);
-            var indicados = await BuscarDireitosIndicadosAsync(evento.Id, colaborador.Id);
-            if (direitos.Count > 0 || indicados.Count > 0)
-            {
-                resposta = new DireitosPorColaboradorAgrupados
-                {
-                    Colaborador = colaborador,
-                    Evento = evento,
-                    Direitos = direitos,
-                    Indicacoes = indicados.GroupBy(i => i.ColaboradorId).ToList().Select(g => new DireitosPorColaboradorAgrupados
-                    {
-                        Colaborador = g.First().Colaborador,
-                        Evento = evento,
-                        Direitos = g.ToList(),
-                    }).ToList(),
-                };
-            }
-
 
             return resposta;
         }
 
+        /// <summary>
+        /// Indica uma pessoa para retirada de direitos.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task IndicarPessoaAsync(AdicionarIndicadoRequest request)
         {
-            var evento = await BuscarEventoAsync(request.EventoId);
-            if (evento == null)
+            try
             {
-                _errors.Add(new ErrorModel
-                {
-                    FieldName = nameof(request.EventoId),
-                    Message = (request.EventoId == null) ? "Atualmente não existe nem um evento ativo"
-                        : $"Não foi encontrado nem um evento com o id: {request.EventoId}",
-                });
-                return;
-            }
+                var evento = await BuscarEventoAsync(request.EventoId);
+                var indicado = (string.IsNullOrEmpty(request.Cpf)) ? await _repository.BuscarColaboradorPorEdvAsync(request.Edv) :
+                    await _repository.BuscarColaboradorPorCpfAsync(request.Cpf);
 
-            var indicado = (string.IsNullOrEmpty(request.Cpf)) ? await _repository.BuscarColaboradorPorEdvAsync(request.Edv) :
-                await _repository.BuscarColaboradorPorCpfAsync(request.Cpf);
-            
-            if (indicado == null)
-            {
-                if (string.IsNullOrEmpty(request.NomeCompleto))
+                if (indicado == null)
                 {
-                    _errors.Add(new ErrorModel{
-                        FieldName = nameof(request.NomeCompleto),
-                        Message = "Indicado não encontrado, na tentativa de cadastro o nome completo é necessário"
-                    });
-                    return;
+                    if (string.IsNullOrEmpty(request.NomeCompleto))
+                    {
+                        _errors.Add(new ErrorModel
+                        {
+                            FieldName = nameof(request.NomeCompleto),
+                            Message = "Indicado não encontrado, na tentativa de cadastro o nome completo é necessário"
+                        });
+                        return;
+                    }
+                    indicado = await _repository.CadastrarNovoColaborador(request.Cpf, request.NomeCompleto);
                 }
-                indicado = await _repository.CadastrarNovoColaborador(request.Cpf, request.NomeCompleto);
+                var colaborador = await BuscarColaboradorPorIdAsync((int)request.ColaboradorId);
+
+                if (colaborador.Id == indicado.Id) return;
+
+                await _repository.CadastrarIndicadoEmDireitosAsync(colaborador.Id, evento.Id, indicado.Id, request.DireitosId);
             }
-            var colaborador = await _repository.BuscarColaboradorPorIdAsync((int)request.ColaboradorId);
-            if (colaborador == null)
+            catch (OperacaoInvalidaException)
             {
-                _errors.Add(new ErrorModel{
-                    FieldName = nameof(request.ColaboradorId),
-                    Message = $"Não foi encontrado um colaborador com o ID: {request.ColaboradorId}",
-                });
                 return;
             }
-
-            if (colaborador.Id == indicado.Id) return;
-
-            await _repository.CadastrarIndicadoEmDireitosAsync(colaborador.Id,evento.Id,indicado.Id,request.DireitosId);
         }
 
+        /// <summary>
+        /// Remove as indicações de retirada de direitos.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task RemoverIndicacoesAsync(RemoverIndicadoRequest request)
         {
-            var evento = await BuscarEventoAsync(request.EventoId);
-            if (evento == null)
+            try
             {
-                _errors.Add(new ErrorModel
-                {
-                    FieldName = nameof(request.EventoId),
-                    Message = (request.EventoId == null) ? "Atualmente não existe nem um evento ativo"
-                        : $"Não foi encontrado nem um evento com o id: {request.EventoId}",
-                });
+                var evento = await BuscarEventoAsync(request.EventoId);
+                var colaborador = await BuscarColaboradorPorIdAsync((int)request.ColaboradorId);
+                await _repository.RemoverIndicacoesEmDireitosAsync(colaborador.Id, evento.Id, request.DireitosId);
+            }
+            catch (OperacaoInvalidaException)
+            {
                 return;
             }
-            var colaborador = await _repository.BuscarColaboradorPorIdAsync((int)request.ColaboradorId);
-            if (colaborador == null)
-            {
-                _errors.Add(new ErrorModel{
-                    FieldName = nameof(request.ColaboradorId),
-                    Message = $"Não foi encontrado um colaborador com o ID: {request.ColaboradorId}",
-                });
-                return;
-            }
-            await _repository.RemoverIndicacoesEmDireitosAsync(colaborador.Id, evento.Id, request.DireitosId);
         }
 
+        /// <summary>
+        /// Busca um colaborador por seu EDV
+        /// </summary>
+        /// <param name="edv"></param>
+        /// <returns></returns>
         public async Task<Colaborador> BuscarColaboradorPorEdv(string edv)
         {
             return await _repository.BuscarColaboradorPorEdvAsync(edv);
@@ -158,10 +198,6 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaPublica
         public async Task<List<Direito>> BuscarMeusDireitosAsync(int eventoId, int userId)
         {
             return await _repository.BuscarDireitosAsync(eventoId, userId);
-        }
-        public async Task<List<Direito>> BuscarDireitosIndicadosAsync(int eventoId, int userId)
-        {
-            return await _repository.BuscarDireitosIndicadosAsync(eventoId, userId);
         }
     }
 }

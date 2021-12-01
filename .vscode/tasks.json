@@ -40,8 +40,8 @@
         },
         {
             "label": "scaffold ProjetoBoschContext",
-            "command": "dotnet ef dbcontext scaffold Name=ConnectionStrings:ProjetoBoschContext Microsoft.EntityFrameworkCore.SqlServer -d -c ProjetoBoschContext --context-dir Database/Context/ --output-dir Models/ProjetoBoschContext/ --no-pluralize -f",
-            "type": "process",
+            "command": "dotnet ef dbcontext scaffold Name=ConnectionStrings:ProjetoBoschContext Microsoft.EntityFrameworkCore.SqlServer -d -c ProjetoBoschContext --context-dir Database/Context/ --output-dir Models/v1/ProjetoBoschContext/ --no-pluralize -f",
+            "type": "shell",
         }
     ]
 }

@@ -65,8 +65,8 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaPublica
 
         public async Task CadastrarIndicadoEmDireitosAsync(int colaboradorId, int eventoId, int indicadoId, List<long> direitos)
         {
-            var items = await _db.Direito.Where(d => d.ColaboradorId == colaboradorId 
-                && d.EventoId == eventoId && direitos.Contains(d.Id) && d.DataRetirada == null).ToListAsync();
+            var items = (direitos.Count != 0) ? await _db.Direito.Where(d => d.ColaboradorId == colaboradorId && d.EventoId == eventoId && direitos.Contains(d.Id) && d.DataRetirada == null).ToListAsync()
+                : await _db.Direito.Where(d => d.ColaboradorId == colaboradorId && d.EventoId == eventoId && d.DataRetirada == null).ToListAsync();
 
             foreach (var item in items)
             {

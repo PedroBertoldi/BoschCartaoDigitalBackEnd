@@ -32,11 +32,10 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.Request.AreaPublica
         /// </summary>
         public int? EventoId { get; set; }
         /// <summary>
-        /// Lista com id dos direitos os quais se deseja atribuir a indicação.
+        /// Lista com id dos direitos os quais se deseja atribuir a indicação, se vazio será todos os direitos do evento ativo ou informado.
         /// </summary>
         /// <value></value>
         [Required]
-        [MinLength(1)]
         [MaxLength(50)]
         public List<long> DireitosId { get; set; }
     }
