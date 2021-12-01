@@ -47,6 +47,10 @@ namespace BoschCartaoDigitalBackEnd.Database.Context
             {
                 entity.Property(e => e.Cpf).IsUnicode(false);
 
+                entity.Property(e => e.Edv)
+                    .IsUnicode(false)
+                    .HasComputedColumnSql("(CONVERT([varchar](10),upper(rtrim(ltrim([id]+(55555))))))", false);
+
                 entity.HasOne(d => d.UnidadeOrganizacional)
                     .WithMany(p => p.Colaborador)
                     .HasForeignKey(d => d.UnidadeOrganizacionalId)

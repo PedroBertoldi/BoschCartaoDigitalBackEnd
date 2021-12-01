@@ -14,7 +14,6 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.Request.AreaPublica
         /// Nome do indicado, caso não exista será cadastrado um novo.
         /// </summary>
         /// <value></value>
-        [Required(AllowEmptyStrings = false)]
         [MaxLength(255)]
         public string NomeCompleto { get; set; }
         /// <summary>
@@ -29,12 +28,16 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.Request.AreaPublica
         /// <value></value>
         public string Edv { get; set; }
         /// <summary>
+        /// Id do evento a ser atualizado.
+        /// </summary>
+        public int? EventoId { get; set; }
+        /// <summary>
         /// Lista com id dos direitos os quais se deseja atribuir a indicação.
         /// </summary>
         /// <value></value>
         [Required]
         [MinLength(1)]
         [MaxLength(50)]
-        public List<int> DireitosId { get; set; }
+        public List<long> DireitosId { get; set; }
     }
 }

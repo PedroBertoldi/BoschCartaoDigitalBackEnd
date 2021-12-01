@@ -33,6 +33,9 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext
         public DateTime? DataNascimento { get; set; }
         [Column("unidadeOrganizacionalID")]
         public int? UnidadeOrganizacionalId { get; set; }
+        [Column("EDV")]
+        [StringLength(10)]
+        public string Edv { get; set; }
 
         [ForeignKey(nameof(UnidadeOrganizacionalId))]
         [InverseProperty("Colaborador")]
