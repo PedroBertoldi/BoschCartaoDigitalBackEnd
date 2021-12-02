@@ -1,6 +1,6 @@
 CREATE DATABASE projetoBosch;
 GO
---DROP DATABASE projetoBosch
+--DROP DATABASE projetoBosch SELECT * FROM projetoBosch.dbo.colaborador
 ------------------------------------------------------------------------------------------------------------------------
 -----------------------------------------IMPORTAÇÂO DOS DADOS EM TABELAS-------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------
@@ -154,7 +154,8 @@ CREATE TABLE projetoBosch.dbo.colaborador (
 	unidadeOrganizacionalID int,
 	constraint pk_colaborador_id primary key(id),
 	constraint fk_colaborador_unidadeOrganizacionalID foreign key(unidadeOrganizacionalID) references unidadeOrganizacional(id),
-	EDV as cast(upper(rtrim(ltrim(id+55555))) as varchar(10))
+	EDV varchar(10),
+	Senha varchar(15)
 );
 
 INSERT INTO projetoBosch.dbo.colaborador(cpf, nomeCompleto, dataNascimento,unidadeOrganizacionalID)
@@ -173,6 +174,8 @@ INSERT INTO projetoBosch.dbo.colaborador(cpf, nomeCompleto, dataNascimento,unida
 	SELECT DISTINCT CPF, nomeCompleto, dataNascimento,id FROM projetoBosch.dbo.PresenteBosch$ P
 	INNER JOIN projetoBosch.dbo.unidadeOrganizacional U on P.unidadeOrganizacional = U.descricao
 
+UPDATE projetoBosch.dbo.colaborador SET EDV=REVERSE(SUBSTRING(cpf,2,7)); --Criação dos EDVS
+UPDATE projetoBosch.dbo.colaborador SET Senha=CONCAT(SUBSTRING(nomeCompleto, 4, 1),REVERSE(SUBSTRING(cpf,5,3)), SUBSTRING(nomeCompleto, 2, 1), SUBSTRING(CONVERT(varchar, EDV),2,3)); --Criação das Senhas
 ------------------------------------------------------------------------------------------------------
 --PERMISSAO
 CREATE TABLE projetoBosch.dbo.permissao(
@@ -186,14 +189,15 @@ CREATE TABLE projetoBosch.dbo.permissao(
 --EVENTO
 CREATE TABLE projetoBosch.dbo.evento(
 	id int identity(1,1),
-    descricao nvarchar(255) not null,
+	nome nvarchar(50) not null,
+    descricao nvarchar(255),
 	descricaNormalizada as cast(upper(rtrim(ltrim(descricao))) as nvarchar(255)),
 	dataInicio datetime,
 	dataFim datetime,
 	constraint pk_evento_id primary key(id)
 );
 
-INSERT INTO projetoBosch.dbo.evento (descricao, dataInicio, dataFim) VALUES ('Natal', '2021-12-23','2021-12-26')
+INSERT INTO projetoBosch.dbo.evento (nome, descricao, dataInicio, dataFim) VALUES ('Natal', 'Natal Bosch 2021', '2021-12-23','2021-12-26')
 ------------------------------------------------------------------------------------------------------
 --BENEFÍCIOS
 CREATE TABLE projetoBosch.dbo.beneficio(
@@ -237,7 +241,51 @@ INSERT INTO projetoBosch.dbo.beneficio (descricao) VALUES ('Cesta Seca'),
 														('Brinquedo F10'),
 														('Brinquedo F11'),
 														('Brinquedo F12');
+------------------------------------------------------------------------------------------------------
+--BENEFÍCIO-EVENTO
+CREATE TABLE projetoBosch.dbo.BeneficioEvento(
+	beneficioID int,
+	eventoID int,
+	constraint pk_beneficioEvento_id primary key(beneficioID, eventoID),
+	constraint fk_beneficioEvento_beneficioID foreign key(beneficioID) references projetoBosch.dbo.beneficio(id),
+	constraint fk_fk_beneficioEvento_beneficioID_eventoID foreign key(eventoID) references projetoBosch.dbo.evento(id),
+)
 
+INSERT INTO projetoBosch.dbo.BeneficioEvento(beneficioID, eventoID) VALUES (1, 1),
+									(2, 1),
+									(3, 1),
+									(4, 1),
+									(5, 1),
+									(6, 1),
+									(7, 1),
+									(8, 1),
+									(9, 1),		
+									(10, 1),
+									(11, 1),
+									(12, 1),
+									(13, 1),		
+									(14, 1),
+									(15, 1),
+									(16, 1),					
+									(17, 1),
+									(18, 1),
+									(19, 1),			
+									(20, 1),
+									(21, 1),
+									(22, 1),
+									(23, 1),
+									(24, 1),
+									(25, 1),
+									(26, 1),
+									(27, 1),
+									(28, 1),
+									(29, 1),
+									(30, 1),
+									(31, 1),
+									(32, 1),
+									(33, 1),
+									(34, 1),
+									(35, 1);
 ------------------------------------------------------------------------------------------------------
 --DIREITO
 CREATE TABLE projetoBosch.dbo.direito(
@@ -533,3 +581,4 @@ DROP TABLE projetoBosch.dbo.CestaFria$;
 DROP TABLE projetoBosch.dbo.PresenteBosch$;
 DROP TABLE projetoBosch.dbo.MaterialEscolar$;
 DROP TABLE projetoBosch.dbo.Brinquedos$;
+
