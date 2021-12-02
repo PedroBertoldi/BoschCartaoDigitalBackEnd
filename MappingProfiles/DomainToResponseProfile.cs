@@ -1,8 +1,7 @@
 using AutoMapper;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Response;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.AreaPublica;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
 
 namespace BoschCartaoDigitalBackEnd.MappingProfiles
 {

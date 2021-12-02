@@ -1,15 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using BoschCartaoDigitalBackEnd.Business.AreaPublica;
-using BoschCartaoDigitalBackEnd.Models.v1.Request.AreaPublica;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
 using Microsoft.AspNetCore.Http;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.AreaPublica;
 using System.Linq;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Response;
+using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Request;
 
 namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaPublica
 {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace BoschCartaoDigitalBackEnd.Models.v1.Request.AreaPublica
+namespace BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Request
 {
     public class RemoverIndicadoRequest
     {
@@ -15,10 +15,9 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.Request.AreaPublica
         [Required]
         public int? ColaboradorId { get; set; }
         /// <summary>
-        /// Ids dos direitos para remoção de indicação
+        /// Ids dos direitos para remoção de indicação. Se nem um direito for especificado, todo serão removidos.
         /// </summary>
         [Required]
-        [MinLength(1)]
         [MaxLength(50)]
         public List<long> DireitosId { get; set; }
     }

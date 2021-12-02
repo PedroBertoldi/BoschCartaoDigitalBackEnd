@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace BoschCartaoDigitalBackEnd.Models.v1.Responses.Autenticacao
+namespace BoschCartaoDigitalBackEnd.Models.v1.Autenticacao.Response
 {
     public class TokenResponse
     {

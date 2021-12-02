@@ -13,6 +13,7 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext
     {
         public Beneficio()
         {
+            BeneficioEvento = new HashSet<BeneficioEvento>();
             Direito = new HashSet<Direito>();
         }
 
@@ -27,6 +28,8 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext
         [StringLength(255)]
         public string DescricaNormalizada { get; set; }
 
+        [InverseProperty("Beneficio")]
+        public virtual ICollection<BeneficioEvento> BeneficioEvento { get; set; }
         [InverseProperty("Beneficio")]
         public virtual ICollection<Direito> Direito { get; set; }
     }

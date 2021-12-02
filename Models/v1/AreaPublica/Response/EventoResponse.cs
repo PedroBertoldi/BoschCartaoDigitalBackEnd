@@ -1,6 +1,6 @@
 using System;
 
-namespace BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom
+namespace BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Response
 {
     public class EventoResponse
     {

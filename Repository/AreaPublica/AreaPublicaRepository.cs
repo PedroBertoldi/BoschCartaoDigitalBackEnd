@@ -26,6 +26,10 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaPublica
         {
             return await _db.Evento.Where(e => e.Id == id).FirstOrDefaultAsync();
         }
+        public async Task<Evento> BuscarProximoEventoAsync()
+        {
+            return await _db.Evento.Where(e => e.DataInicio >= DateTime.Now).OrderBy(e => e.DataInicio.Value.Date).FirstOrDefaultAsync();
+        }
         public async Task<Colaborador> BuscarColaboradorPorCpfAsync(string cpf)
         {
             return await _db.Colaborador.Where(c => c.Cpf == cpf).FirstOrDefaultAsync();
@@ -77,8 +81,8 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaPublica
         }
         public async Task RemoverIndicacoesEmDireitosAsync(int colaboradorId, int eventoId, List<long> direitos)
         {
-            var items = await _db.Direito.Where(d => d.ColaboradorId == colaboradorId && d.EventoId == eventoId && direitos.Contains(d.Id) && d.DataRetirada == null)
-                .ToListAsync();
+            var items = (direitos.Count > 0) ? await _db.Direito.Where(d => d.ColaboradorId == colaboradorId && d.EventoId == eventoId && direitos.Contains(d.Id) && d.DataRetirada == null).ToListAsync()
+                : await _db.Direito.Where(d => d.ColaboradorId == colaboradorId && d.EventoId == eventoId && d.DataRetirada == null).ToListAsync();
             foreach (var item in items)
             {
                 item.IndicadoId = null;

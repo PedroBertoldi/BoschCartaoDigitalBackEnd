@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
 
-namespace BoschCartaoDigitalBackEnd.Models.v1.Responses.AreaPublica
+namespace BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Response
 {
     public class DireitoInfoReduzidaResponse
     {

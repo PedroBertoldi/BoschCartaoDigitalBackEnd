@@ -6,9 +6,9 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using BoschCartaoDigitalBackEnd.Database.Context;
-using BoschCartaoDigitalBackEnd.Models.v1.Request.Autenticacao;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.Autenticacao;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
+using BoschCartaoDigitalBackEnd.Models.v1.Autenticacao.Request;
+using BoschCartaoDigitalBackEnd.Models.v1.Autenticacao.Response;
+using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +40,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.Autenticacao
         public async Task<IActionResult> Login([FromBody] LoginUserRequest model)
         {
             var user = await _db.Colaborador.Include(c => c.Permissao).ThenInclude(p => p.TipoPermissao).AsSplitQuery()
-                .Where(c => c.Cpf == model.Cpf && c.DataNascimento.Value.Date == model.DataNascimento.Value.Date && c.UnidadeOrganizacionalId != null).FirstOrDefaultAsync();
+                .Where(c => c.Cpf == model.Cpf && c.DataNascimento.Value.Date == model.DataNascimento.Value.Date && c.Edv != null).FirstOrDefaultAsync();
 
             if (user != null)
             {
