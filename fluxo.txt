@@ -1,0 +1,8 @@
+Fuxo de criação de funcionalidade no backend
+
+*° Criar entrada de dados
+    *° Criar um controller ou uma função em uma controller já existente
+*° Criar ou adicionar uma função no Business para construir a regra de negocio
+*° Criar ou adicionar uma função no Repository para obter informações do banco de dados
+
+COMMIT ATE AQUI: [AreaAdminCadastro 25b9275] O minimo para ter um controller, business e repository
