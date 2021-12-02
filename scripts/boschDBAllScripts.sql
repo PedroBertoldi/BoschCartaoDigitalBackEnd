@@ -1,7 +1,7 @@
 -----------------------------------------DATATBASE VERSION 2------------------------------------------------------------
 CREATE DATABASE projetoBosch;
 GO
-
+--DROP DATABASE projetoBosch
 CREATE TABLE projetoBosch.dbo.tipoPermissao (
     id int identity(1,1),
     descricao nvarchar(255) not null,
@@ -89,7 +89,7 @@ CREATE TABLE projetoBosch.dbo.CestaSeca$(
     dataNascimento as CONVERT(DATETIME,dataNascimentoPuro,103)
 )
 GO
-BULK INSERT projetoBosch.dbo.CestaSeca$ FROM 'C:\Users\Diego\Desktop\BOSH_ENTREGA_FINAL\BoschCartaoDigitalBackEnd\scripts\arquivosCSV\cestaSecaCSV.csv'
+BULK INSERT projetoBosch.dbo.CestaSeca$ FROM 'C:\Users\droit\Desktop\ProjetoBosch\BoschCartaoDigitalBackEnd\scripts\arquivosCSV\cestaSecaCSV.csv'
 WITH
 (
     FIRSTROW = 2,
@@ -107,7 +107,7 @@ CREATE TABLE projetoBosch.dbo.CestaFria$(
     dataNascimento as CONVERT(DATETIME,dataNascimentoPuro,103)
 )
 GO
-BULK INSERT projetoBosch.dbo.CestaFria$ FROM 'C:\Users\Diego\Desktop\BOSH_ENTREGA_FINAL\BoschCartaoDigitalBackEnd\scripts\arquivosCSV\cestaFriaCSV.csv'
+BULK INSERT projetoBosch.dbo.CestaFria$ FROM 'C:\Users\droit\Desktop\ProjetoBosch\BoschCartaoDigitalBackEnd\scripts\arquivosCSV\cestaFriaCSV.csv'
 WITH
 (
     FIRSTROW = 2,
@@ -125,7 +125,7 @@ CREATE TABLE projetoBosch.dbo.PresenteBosch$(
     dataNascimento as CONVERT(DATETIME,dataNascimentoPuro,103)
 )
 GO
-BULK INSERT projetoBosch.dbo.PresenteBosch$ FROM 'C:\Users\Diego\Desktop\BOSH_ENTREGA_FINAL\BoschCartaoDigitalBackEnd\scripts\arquivosCSV\presenteBoschCSV.csv'
+BULK INSERT projetoBosch.dbo.PresenteBosch$ FROM 'C:\Users\droit\Desktop\ProjetoBosch\BoschCartaoDigitalBackEnd\scripts\arquivosCSV\presenteBoschCSV.csv'
 WITH
 (
     FIRSTROW = 2,
@@ -150,7 +150,7 @@ CREATE TABLE projetoBosch.dbo.MaterialEscolar$(
 
 )
 GO
-BULK INSERT projetoBosch.dbo.MaterialEscolar$ FROM 'C:\Users\Diego\Desktop\BOSH_ENTREGA_FINAL\BoschCartaoDigitalBackEnd\scripts\arquivosCSV\materialEscolarCSV.csv'
+BULK INSERT projetoBosch.dbo.MaterialEscolar$ FROM 'C:\Users\droit\Desktop\ProjetoBosch\BoschCartaoDigitalBackEnd\scripts\arquivosCSV\materialEscolarCSV.csv'
 WITH
 (
     FIRSTROW = 2,
@@ -183,7 +183,7 @@ CREATE TABLE projetoBosch.dbo.Brinquedos$(
 )
 
 GO
-BULK INSERT projetoBosch.dbo.Brinquedos$ FROM 'C:\Users\Diego\Desktop\BOSH_ENTREGA_FINAL\BoschCartaoDigitalBackEnd\scripts\arquivosCSV\brinquedoCSV.csv'
+BULK INSERT projetoBosch.dbo.Brinquedos$ FROM 'C:\Users\droit\Desktop\ProjetoBosch\BoschCartaoDigitalBackEnd\scripts\arquivosCSV\brinquedoCSV.csv'
 WITH
 (
     FIRSTROW = 2,
