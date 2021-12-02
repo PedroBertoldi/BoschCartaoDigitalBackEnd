@@ -1,18 +1,19 @@
 -----------------------------------------DATATBASE VERSION 2------------------------------------------------------------
 CREATE DATABASE projetoBosch;
-GO
+GO 
+SELECT * FROM projetoBosch.dbo.unidadeOrganizacional
 --DROP DATABASE projetoBosch
 CREATE TABLE projetoBosch.dbo.tipoPermissao (
     id int identity(1,1),
     descricao nvarchar(255) not null,
-    descricaNormalizada as cast(upper(rtrim(ltrim(descricao))) as nvarchar(255)),
+    descricaoNormalizada as cast(upper(rtrim(ltrim(descricao))) as nvarchar(255)),
     constraint pk_tipoPermissao_id primary key(id)
 );
 
 CREATE TABLE projetoBosch.dbo.unidadeOrganizacional (
     id int identity(1,1),
     descricao nvarchar(255) not null,
-    descricaNormalizada as cast(upper(rtrim(ltrim(descricao))) as nvarchar(255)),
+    descricaoNormalizada as cast(upper(rtrim(ltrim(descricao))) as nvarchar(255)),
     constraint pk_unidadeOrganizacional_id primary key(id)
 );
 
@@ -40,7 +41,7 @@ CREATE TABLE projetoBosch.dbo.evento(
     id int identity(1,1),
     nome nvarchar(50) not null,
     descricao nvarchar(255),
-    descricaNormalizada as cast(upper(rtrim(ltrim(descricao))) as nvarchar(255)),
+    descricaoNormalizada as cast(upper(rtrim(ltrim(descricao))) as nvarchar(255)),
     dataInicio datetime,
     dataFim datetime,
     constraint pk_evento_id primary key(id)
@@ -49,7 +50,7 @@ CREATE TABLE projetoBosch.dbo.evento(
 CREATE TABLE projetoBosch.dbo.beneficio(
     id int identity(1,1),
     descricao nvarchar(255) not null,
-    descricaNormalizada as cast(upper(rtrim(ltrim(descricao))) as nvarchar(255)),
+    descricaoNormalizada as cast(upper(rtrim(ltrim(descricao))) as nvarchar(255)),
     constraint pk_beneficio_id primary key(id)
 );
 
@@ -82,7 +83,7 @@ CREATE TABLE projetoBosch.dbo.direito(
 
 -----------------------------------------CESTA SECA---------------------------------------------------------------------
 CREATE TABLE projetoBosch.dbo.CestaSeca$(
-    CPF varchar(11),
+    CPF varchar(20),
     dataNascimentoPuro varchar(50),
     nomeCompleto nvarchar(255),
     unidadeOrganizacional nvarchar(255),
@@ -100,7 +101,7 @@ WITH
 
 -----------------------------------------CESTA FRIA---------------------------------------------------------------------
 CREATE TABLE projetoBosch.dbo.CestaFria$(
-    CPF varchar(11),
+    CPF varchar(20),
     dataNascimentoPuro varchar(50),
     nomeCompleto nvarchar(255),
     unidadeOrganizacional nvarchar(255),
@@ -118,7 +119,7 @@ WITH
 
 -----------------------------------------PRESENTE BOSCH-----------------------------------------------------------------
 CREATE TABLE projetoBosch.dbo.PresenteBosch$(
-    CPF varchar(11),
+    CPF varchar(20),
     dataNascimentoPuro varchar(50),
     nomeCompleto nvarchar(255),
     unidadeOrganizacional nvarchar(255),
@@ -136,7 +137,7 @@ WITH
 
 -----------------------------------------MATERIAL ESCOLAR---------------------------------------------------------------
 CREATE TABLE projetoBosch.dbo.MaterialEscolar$(
-    CPF varchar(11),
+    CPF varchar(20),
     dataNascimentoPuro varchar(50),
     nomeCompleto nvarchar(255),
     unidadeOrganizacional nvarchar(255),
@@ -162,7 +163,7 @@ WITH
 
 -----------------------------------------BRINQUEDOS---------------------------------------------------------------------
 CREATE TABLE projetoBosch.dbo.Brinquedos$(
-    CPF varchar(11),
+    CPF varchar(20),
     dataNascimentoPuro varchar(50),
     nomeCompleto nvarchar(255),
     unidadeOrganizacional nvarchar(255),
@@ -214,19 +215,19 @@ GO
 -- colaborador --
 INSERT INTO projetoBosch.dbo.colaborador(cpf, nomeCompleto, dataNascimento,unidadeOrganizacionalID)
 (
-    SELECT DISTINCT CPF, nomeCompleto, dataNascimento,id  FROM projetoBosch.dbo.Brinquedos$ B
+    SELECT DISTINCT REPLACE(REPLACE(CPF, '.', ''), '-',''), nomeCompleto, dataNascimento,id  FROM projetoBosch.dbo.Brinquedos$ B
     INNER JOIN projetoBosch.dbo.unidadeOrganizacional U on B.unidadeOrganizacional = U.descricao
     UNION
-    SELECT DISTINCT CPF, nomeCompleto, dataNascimento,id FROM projetoBosch.dbo.CestaSeca$ CS
+    SELECT DISTINCT REPLACE(REPLACE(CPF, '.', ''), '-',''), nomeCompleto, dataNascimento,id FROM projetoBosch.dbo.CestaSeca$ CS
     INNER JOIN projetoBosch.dbo.unidadeOrganizacional U on CS.unidadeOrganizacional = U.descricao
     UNION
-    SELECT DISTINCT CPF, nomeCompleto, dataNascimento,id FROM projetoBosch.dbo.CestaFria$ CF
+    SELECT DISTINCT REPLACE(REPLACE(CPF, '.', ''), '-',''), nomeCompleto, dataNascimento,id FROM projetoBosch.dbo.CestaFria$ CF
     INNER JOIN projetoBosch.dbo.unidadeOrganizacional U on CF.unidadeOrganizacional = U.descricao
     UNION
-    SELECT DISTINCT CPF, nomeCompleto, dataNascimento,id FROM projetoBosch.dbo.MaterialEscolar$ ME
+    SELECT DISTINCT REPLACE(REPLACE(CPF, '.', ''), '-',''), nomeCompleto, dataNascimento,id FROM projetoBosch.dbo.MaterialEscolar$ ME
     INNER JOIN projetoBosch.dbo.unidadeOrganizacional U on ME.unidadeOrganizacional = U.descricao
     UNION
-    SELECT DISTINCT CPF, nomeCompleto, dataNascimento,id FROM projetoBosch.dbo.PresenteBosch$ P
+    SELECT DISTINCT REPLACE(REPLACE(CPF, '.', ''), '-',''), nomeCompleto, dataNascimento,id FROM projetoBosch.dbo.PresenteBosch$ P
     INNER JOIN projetoBosch.dbo.unidadeOrganizacional U on P.unidadeOrganizacional = U.descricao
 );
 
@@ -324,21 +325,21 @@ INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 (
     SELECT C.id, 1 as idEvento, B.id FROM projetoBosch.dbo.CestaSeca$ CS
     INNER JOIN projetoBosch.dbo.colaborador C ON C.cpf = CS.CPF
-    INNER JOIN projetoBosch.dbo.beneficio B ON B.descricaNormalizada = 'CESTA SECA'
+    INNER JOIN projetoBosch.dbo.beneficio B ON B.descricaoNormalizada = 'CESTA SECA'
 );
 GO
 INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 (
     SELECT C.id, 1 as idEvento, B.id FROM projetoBosch.dbo.CestaFria$ CF
     INNER JOIN projetoBosch.dbo.colaborador C ON C.cpf = CF.CPF
-    INNER JOIN projetoBosch.dbo.beneficio B ON B.descricaNormalizada = 'CESTA FRIA'
+    INNER JOIN projetoBosch.dbo.beneficio B ON B.descricaoNormalizada = 'CESTA FRIA'
 );
 GO
 INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 (
     SELECT C.id, 1 as idEvento, B.id FROM projetoBosch.dbo.PresenteBosch$ PB
     INNER JOIN projetoBosch.dbo.colaborador C ON C.cpf = PB.CPF
-    INNER JOIN projetoBosch.dbo.beneficio B ON B.descricaNormalizada = 'PRESENTE'
+    INNER JOIN projetoBosch.dbo.beneficio B ON B.descricaoNormalizada = 'PRESENTE'
 );
 -- direito --
 GO
@@ -367,40 +368,41 @@ BEGIN
     BEGIN
 		declare @idColaborador int;
 		declare @beneficioID int;
-		SELECT @idColaborador = id FROM projetoBosch.dbo.colaborador WHERE cpf=@CPF;
+		PRINT(@CPF)
+		SELECT @idColaborador = id FROM projetoBosch.dbo.colaborador WHERE cpf=REPLACE(REPLACE(@CPF, '.', ''), '-','');
 		IF @kit1 IS NOT NULL
 			BEGIN
-				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='ME KIT 1';
+				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='ME KIT 1';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador, 1, @beneficioID)			
 			END;
 		IF @kit2 IS NOT NULL
 			BEGIN
-				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='ME KIT 2';
+				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='ME KIT 2';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador, 1, @beneficioID)			
 			END;
 		IF @kit3 IS NOT NULL
 			BEGIN
-				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='ME KIT 3';
+				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='ME KIT 3';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador, 1, @beneficioID)			
 			END;
 		IF @kit4 IS NOT NULL
 			BEGIN
-				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='ME KIT 4';
+				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='ME KIT 4';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador, 1, @beneficioID)			
 			END;		
 		IF @kit5 IS NOT NULL
 			BEGIN
-				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='ME KIT 5';
+				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='ME KIT 5';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador, 1, @beneficioID)			
 			END;
 		IF @kit6 IS NOT NULL
 			BEGIN
-				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='ME KIT 6';
+				SELECT @beneficioID = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='ME KIT 6';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador, 1, @beneficioID)			
 			END;
@@ -450,14 +452,14 @@ BEGIN
 		declare @idColaborador2 int;
 		declare @beneficioID2 int;
 		declare @genero varchar(1);
-		SELECT @idColaborador2 = id FROM projetoBosch.dbo.colaborador WHERE cpf=@CPF2;
+		SELECT @idColaborador2 = id FROM projetoBosch.dbo.colaborador WHERE cpf=REPLACE(REPLACE(@CPF2, '.', ''), '-','');
 		IF @B0 IS NOT NULL
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 2);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F0';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F0';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M0';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M0';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;
@@ -465,9 +467,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 2);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F1';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F1';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M1';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M1';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;
@@ -475,9 +477,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 2);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F2';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F2';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M2';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M2';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;
@@ -485,9 +487,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 2);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F3';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F3';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M3';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M3';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;	
@@ -495,9 +497,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 2);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F4';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F4';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M4';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M4';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;
@@ -505,9 +507,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 2);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F5';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F5';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M5';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M5';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;
@@ -515,9 +517,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 2);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F6';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F6';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M6';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M6';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;
@@ -525,9 +527,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 2);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F7';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F7';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M7';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M7';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;
@@ -535,9 +537,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 2);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F8';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F8';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M8';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M8';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;
@@ -545,9 +547,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 3); --A partir daqui, o g�nero � o 3o d�gito
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F9';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F9';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M9';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M9';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;
@@ -555,9 +557,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 3);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F10';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F10';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M10';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M10';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;
@@ -565,9 +567,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 3);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F11';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F11';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M11';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M11';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;
@@ -575,9 +577,9 @@ BEGIN
 			BEGIN
 				SELECT @genero = SUBSTRING(@B0, 1, 3);
 				IF @genero='M'
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO F12';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO F12';
 				ELSE
-					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaNormalizada='BRINQUEDO M12';
+					SELECT @beneficioID2 = id FROM projetoBosch.dbo.beneficio WHERE descricaoNormalizada='BRINQUEDO M12';
 				INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 				VALUES (@idColaborador2, 1, @beneficioID2)			
 			END;     
