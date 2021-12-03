@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BoschCartaoDigitalBackEnd.Models.v1.Request.AreaAdmin
+namespace BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request
 {
     public class ListarBeneficiosEventoRequest
     {

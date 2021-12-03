@@ -1,5 +1,5 @@
 
-namespace BoschCartaoDigitalBackEnd.Models.v1.Responses.AreaAdmin
+namespace BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Response
 {
     public class ListarBeneficiosEventoResponse
     {

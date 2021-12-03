@@ -5,6 +5,8 @@ using BoschCartaoDigitalBackEnd.Business.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext.Response;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Response;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,6 +48,21 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             
             var evento = await _business.BuscarEventoPorIdAsync((int)id);
             return Ok(_mapper.Map<EventoResponse>(evento));
+        }
+
+        /// <summary>
+        /// Lista os beneficios de um evento.
+        /// </summary>
+        /// <param name="request">Parametros necessários para a consulta</param>
+        // [AllowAnonymous]
+        [HttpGet("listar-beneficios")]
+        [ProducesResponseType(typeof(List<ListarBeneficiosEventoResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ListarBeneficiosEvento([FromQuery] ListarBeneficiosEventoRequest request)
+        {
+            var resposta = await _business.ListaBeneficiosAsync(request);
+            var erros = _business.BuscarErros();
+            return (erros == null) ? Ok(_mapper.Map<List<ListarBeneficiosEventoResponse>>(resposta)) : BadRequest(erros);
         }
     }
 }

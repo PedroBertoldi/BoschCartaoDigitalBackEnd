@@ -25,5 +25,14 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.Evento.Where(e => e.Id == id).FirstOrDefaultAsync();
         }
+
+        public async Task<List<Beneficio>> ListaBeneficioIdEventoAsync(int? eventoId)
+        {
+            Evento con = await _db.Evento.Where(e => e.Id == (int)eventoId)
+                .Include( d => d.BeneficioEvento )
+                .ThenInclude( d => d.Beneficio )
+                .AsSplitQuery().FirstOrDefaultAsync();
+            return ((con==null) ? null : con.BeneficioEvento.Select(c => c.Beneficio ).ToList());
+        }
     }
 }
