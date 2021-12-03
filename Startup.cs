@@ -5,9 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using BoschCartaoDigitalBackEnd.Business.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Business.AreaPublica;
 using BoschCartaoDigitalBackEnd.Database.Context;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
+using BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Repository.AreaPublica;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -57,9 +59,11 @@ namespace BoschCartaoDigitalBackEnd
 
             //Repository
             services.AddScoped<AreaPublicaRepository>();
+            services.AddScoped<AreaAdministrativaRepository>();
 
             //Business
             services.AddScoped<AreaPublicaBusiness>();
+            services.AddScoped<AreaAdministrativaBusiness>();
 
             services.AddAuthentication(options =>
             {

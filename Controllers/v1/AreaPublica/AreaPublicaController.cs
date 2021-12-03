@@ -8,6 +8,7 @@ using System.Linq;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Response;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Request;
+using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext.Response;
 
 namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaPublica
 {
