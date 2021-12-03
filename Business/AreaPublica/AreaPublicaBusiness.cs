@@ -103,21 +103,18 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaPublica
                 var colaborador = await BuscarColaboradorAsync(request.Cpf, request.DataNascimento.Value);
                 var direitos = await BuscarMeusDireitosAsync(evento.Id, colaborador.Id);
                 var indicados = await _repository.BuscarDireitosIndicadosAsync(evento.Id, colaborador.Id);
-                if (direitos.Count > 0 || indicados.Count > 0)
+                resposta = new DireitosPorColaboradorAgrupados
                 {
-                    resposta = new DireitosPorColaboradorAgrupados
+                    Colaborador = colaborador,
+                    Evento = evento,
+                    Direitos = direitos,
+                    Indicacoes = (indicados.Count > 0) ? indicados.GroupBy(i => i.ColaboradorId).ToList().Select(g => new DireitosPorColaboradorAgrupados
                     {
-                        Colaborador = colaborador,
+                        Colaborador = g.First().Colaborador,
                         Evento = evento,
-                        Direitos = direitos,
-                        Indicacoes = indicados.GroupBy(i => i.ColaboradorId).ToList().Select(g => new DireitosPorColaboradorAgrupados
-                        {
-                            Colaborador = g.First().Colaborador,
-                            Evento = evento,
-                            Direitos = g.ToList(),
-                        }).ToList(),
-                    };
-                }
+                        Direitos = g.ToList(),
+                    }).ToList() : new List<DireitosPorColaboradorAgrupados>(),
+                };
             }
             catch (OperacaoInvalidaException)
             {

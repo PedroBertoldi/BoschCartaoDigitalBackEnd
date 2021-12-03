@@ -10,6 +10,8 @@ using BoschCartaoDigitalBackEnd.Business.AreaPublica;
 using BoschCartaoDigitalBackEnd.Database.Context;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Repository.AreaAdmin;
+using BoschCartaoDigitalBackEnd.Business.AreaAdministrativa;
+using BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Repository.AreaPublica;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -60,10 +62,12 @@ namespace BoschCartaoDigitalBackEnd
             //Repository
             services.AddScoped<AreaAdminRepository>();
             services.AddScoped<AreaPublicaRepository>();
+            services.AddScoped<AreaAdministrativaRepository>();
 
             //Business
             services.AddScoped<AreaAdminBusiness>();
             services.AddScoped<AreaPublicaBusiness>();
+            services.AddScoped<AreaAdministrativaBusiness>();
 
             services.AddAuthentication(options =>
             {

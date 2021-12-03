@@ -1,6 +1,6 @@
 using System;
 
-namespace BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Response
+namespace BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext.Response
 {
     public class ColaboradorResponse
     {

@@ -5,6 +5,7 @@ using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Response;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
 using BoschCartaoDigitalBackEnd.Models.v1.Responses.AreaAdmin;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
+using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext.Response;
 
 namespace BoschCartaoDigitalBackEnd.MappingProfiles
 {
