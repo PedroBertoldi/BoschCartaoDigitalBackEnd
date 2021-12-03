@@ -1,7 +1,6 @@
 -----------------------------------------DATATBASE VERSION 2------------------------------------------------------------
 CREATE DATABASE projetoBosch;
 GO 
-SELECT * FROM projetoBosch.dbo.unidadeOrganizacional
 --DROP DATABASE projetoBosch
 CREATE TABLE projetoBosch.dbo.tipoPermissao (
     id int identity(1,1),
