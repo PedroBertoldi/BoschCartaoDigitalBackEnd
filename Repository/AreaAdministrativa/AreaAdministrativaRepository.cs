@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BoschCartaoDigitalBackEnd.Database.Context;
+using BoschCartaoDigitalBackEnd.Extentions;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,29 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
             _db.Attach(evento).State = EntityState.Modified;
             await _db.SaveChangesAsync();
             return evento;
+        }
+        public async Task<Beneficio> BuscarBeneficioPorDescricaoAsync(string descricao)
+        {
+            var descricaoLimpa = descricao.NormalizarString();
+            return await _db.Beneficio.Where(b => b.DescricaoNormalizada == descricaoLimpa).FirstOrDefaultAsync();
+        }
+
+        public async Task<Beneficio> CriarBeneficioAsync(Beneficio beneficio)
+        {
+            await _db.Beneficio.AddAsync(beneficio);
+            await _db.SaveChangesAsync();
+            return beneficio;
+        }
+        public async Task<Beneficio> BuscarBeneficioPorIdAsync(int id)
+        {
+            return await _db.Beneficio.Where(b => b.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<BeneficioEvento> CriarRelacaoBeneficioEventoAsync(BeneficioEvento beneficioEvento)
+        {
+            await _db.BeneficioEvento.AddAsync(beneficioEvento);
+            await _db.SaveChangesAsync();
+            return beneficioEvento;
         }
     }
 }

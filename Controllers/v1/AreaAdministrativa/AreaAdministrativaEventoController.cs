@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
 {
     [ApiController]
-    [Route("api/AreaAdministrativa/Evento")]
+    [Route("api/AreaAdministrativa")]
     [Produces("application/json")]
     public class AreaAdministrativaEventoController : ControllerBase
     {
@@ -31,7 +31,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// Retorna todos os eventos cadastrados, suporta paginação.
         /// </summary>
         /// <param name="paginacao">parametros para paginação</param>
-        [HttpGet]
+        [HttpGet("Evento")]
         [ProducesResponseType(typeof(List<EventoResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> BuscarTodosEventos([FromQuery] PaginacaoRequest paginacao)
         {
@@ -43,7 +43,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// Retorna um evento em especifico.
         /// </summary>
         /// <param name="id">Id do evento</param>
-        [HttpGet("{id}")]
+        [HttpGet("Evento/{id}")]
         [ProducesResponseType(typeof(EventoResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> BuscarTodosEventos([FromRoute] int? id)
         {
@@ -54,24 +54,10 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         }
 
         /// <summary>
-        /// Lista os beneficios de um evento.
-        /// </summary>
-        /// <param name="request">Parametros necessários para a consulta</param>
-        // [AllowAnonymous]
-        [HttpGet("listar-beneficios")]
-        [ProducesResponseType(typeof(List<ListarBeneficiosEventoResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ListarBeneficiosEvento([FromQuery] ListarBeneficiosEventoRequest request)
-        {
-            var resposta = await _business.ListaBeneficiosAsync(request);
-            var erros = _business.BuscarErros();
-            return (erros == null) ? Ok(_mapper.Map<List<ListarBeneficiosEventoResponse>>(resposta)) : BadRequest(erros);
-        }
-        /// <summary>
         ///  Cria um evento no banco de dados.
         /// </summary>
         /// <param name="request">Parametros necessário para criação de evento</param>
-        [HttpPost]
+        [HttpPost("Evento")]
         [ProducesResponseType(typeof(EventoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AdicionarEvento([FromBody] CriarEditarEventoRequest request)
@@ -90,7 +76,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// <param name="request">Parametros necessários para a modificação</param>
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(EventoResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> EditarEvento([FromRoute] int? id, [FromBody] CriarEditarEventoRequest request)
         {
             if (id == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(id)));
@@ -99,6 +85,52 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
 
             return (erros == null) ? Ok(_mapper.Map<EventoResponse>(evento)) : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Lista os beneficios de um evento.
+        /// </summary>
+        /// <param name="id">Parametros necessários para a consulta</param>
+        // [AllowAnonymous]
+        [HttpGet("Evento/{id}/listar-beneficios")]
+        [ProducesResponseType(typeof(List<ListarBeneficiosEventoResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ListarBeneficiosEvento([FromRoute] int? id)
+        {
+            if(id == null) return BadRequest(new ErrorModel("ID é um parametro necessário", nameof(id)));
+
+            var resposta = await _business.ListaBeneficiosAsync((int)id);
+            var erros = _business.BuscarErros();
+            return (erros == null) ? Ok(_mapper.Map<List<ListarBeneficiosEventoResponse>>(resposta)) : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Cadastra um tipo de beneficio no banco de dados.
+        /// </summary>
+        /// <param name="request">Parametros necessários</param>
+        [HttpPost("Beneficio")]
+        [ProducesResponseType(typeof(BeneficioResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CadastrarBeneficio([FromBody] CadastroBeneficioRequest request)
+        {
+            var beneficio = await _business.CadastrarBeneficioAsync(request);
+            var erros = _business.BuscarErros();
+
+            return(erros == null) ? Created("", _mapper.Map<BeneficioResponse>(beneficio)) : BadRequest(erros); 
+        }
+        
+        /// <summary>
+        /// Cria uma relação entre um beneficio e um evento.
+        /// </summary>
+        /// <param name="request">Parametros necessarios para criar a relação</param>
+        [HttpPost("Beneficio/criar-relacao")]
+        [ProducesResponseType(typeof(BeneficioEventoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CriarRelacaoBeneficioEvento([FromBody] RelacaoBeneficioEventoRequest request)
+        {
+            var relacao = await _business.CriarRelacaoBeneficioEventoAsync(request);
+            var erros = _business.BuscarErros();
+            return (erros != null) ? BadRequest(erros) : Ok(_mapper.Map<BeneficioEventoResponse>(relacao));
         }
     }
 }

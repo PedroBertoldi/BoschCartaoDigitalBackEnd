@@ -30,14 +30,15 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             return await _repository.BuscarEventoPorIdAsync(id);
         }
 
-        public async Task<List<Beneficio>> ListaBeneficiosAsync(ListarBeneficiosEventoRequest request)
+        public async Task<List<Beneficio>> ListaBeneficiosAsync(int id)
         {
-            List<Beneficio> lista = await _repository.ListaBeneficioIdEventoAsync((int)request.eventoId);
-            if(lista == null){
+            List<Beneficio> lista = await _repository.ListaBeneficioIdEventoAsync((int)id);
+            if (lista == null)
+            {
                 _errors.Add(new ErrorModel
                 {
-                    FieldName = nameof(request.eventoId),
-                    Message = $"Nenhum beneficio encontrado com este eventoId: {(int)request.eventoId}",
+                    FieldName = nameof(id),
+                    Message = $"Nenhum beneficio encontrado com este eventoId: {(int)id}",
                 });
                 return null;
             }
@@ -107,6 +108,56 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
 
             return evento;
+        }
+
+        public async Task<Beneficio> CadastrarBeneficioAsync(CadastroBeneficioRequest request)
+        {
+            var teste = await _repository.BuscarBeneficioPorDescricaoAsync(request.Beneficio);
+            if (teste != null)
+            {
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(request.Beneficio),
+                    Message = $"Já existe um beneficio com a seguinte descrição: {request.Beneficio}"
+                });
+                return null;
+            }
+
+            var temp = new Beneficio{
+                Descricao = request.Beneficio.Trim(),
+            };
+
+            await _repository.CriarBeneficioAsync(temp);
+            return temp;
+        }
+
+        public async Task<BeneficioEvento> CriarRelacaoBeneficioEventoAsync(RelacaoBeneficioEventoRequest request)
+        {
+            var testeBeneficio = await _repository.BuscarBeneficioPorIdAsync((int)request.BeneficioId);
+            if (testeBeneficio == null)
+            {
+                _errors.Add(new ErrorModel{
+                    FieldName = nameof(request.BeneficioId),
+                    Message = $"O beneficio com o ID : {request.BeneficioId} não foi encontrado",
+                });
+                return null;
+            }
+            
+            var testeEvento = await _repository.BuscarEventoPorIdAsync((int)request.EventoId);
+            if (testeEvento == null)
+            {
+                _errors.Add(new ErrorModel{
+                    FieldName = nameof(request.EventoId),
+                    Message = $"Não foi encontrado um evento com o id: {request.EventoId}",
+                });
+                return null;
+            }
+            var temp = new BeneficioEvento{
+                BeneficioId = testeBeneficio.Id,
+                EventoId = testeEvento.Id,
+            };
+            await _repository.CriarRelacaoBeneficioEventoAsync(temp);
+            return temp;
         }
     }
 }

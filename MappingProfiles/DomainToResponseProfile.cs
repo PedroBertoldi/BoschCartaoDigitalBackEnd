@@ -19,6 +19,7 @@ namespace BoschCartaoDigitalBackEnd.MappingProfiles
             CreateMap<Direito, DireitoInfoReduzidaResponse>();
             CreateMap<DireitosPorColaboradorAgrupados, DireitosPorColaboradorAgrupadosResponse>();
             CreateMap<Beneficio, ListarBeneficiosEventoResponse>();
+            CreateMap<BeneficioEvento, BeneficioEventoResponse>();
         }
     }
 }
