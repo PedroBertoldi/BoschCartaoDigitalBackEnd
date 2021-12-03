@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using BoschCartaoDigitalBackEnd.Business.AreaAdmin;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
+using BoschCartaoDigitalBackEnd.Models.v1.Request.AreaAdmin;
 using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
-// using BoschCartaoDigitalBackEnd.Models.v1.Responses.AreaPublica;
-// using BoschCartaoDigitalBackEnd.Models.v1.Request.AreaPublica;
+using BoschCartaoDigitalBackEnd.Models.v1.Responses.AreaAdmin;
 
 namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdmin
 {
@@ -24,6 +24,22 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdmin
         {
             _business = business;
             _mapper = mapper;
+        }
+
+        /// <summary>
+        /// Lista os beneficios de um evento.
+        /// </summary>
+        /// <param name="request">Parametros necessários para a consulta</param>
+        [AllowAnonymous]
+        [HttpGet("listar-beneficios-evento")]
+        [ProducesResponseType(typeof(ListarBeneficiosEventoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ListarBeneficiosEvento([FromQuery] ListarBeneficiosEventoRequest request)
+        {
+            // var resposta = await _business.BuscarListaDireitosCompletaAsync(request);
+            var resposta = await _business.ListaBeneficiosAsync(request);
+            var erros = _business.BuscarErros();
+            return (erros == null) ? Ok(_mapper.Map<ListarBeneficiosEventoResponse>(resposta)) : BadRequest(erros);
         }
     }
 }
