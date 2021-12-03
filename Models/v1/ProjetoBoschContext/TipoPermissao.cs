@@ -23,9 +23,9 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext
         [Column("descricao")]
         [StringLength(255)]
         public string Descricao { get; set; }
-        [Column("descricaNormalizada")]
+        [Column("descricaoNormalizada")]
         [StringLength(255)]
-        public string DescricaNormalizada { get; set; }
+        public string DescricaoNormalizada { get; set; }
 
         [InverseProperty("TipoPermissao")]
         public virtual ICollection<Permissao> Permissao { get; set; }

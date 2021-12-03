@@ -41,7 +41,7 @@ namespace BoschCartaoDigitalBackEnd.Database.Context
 
             modelBuilder.Entity<Beneficio>(entity =>
             {
-                entity.Property(e => e.DescricaNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
+                entity.Property(e => e.DescricaoNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
             });
 
             modelBuilder.Entity<BeneficioEvento>(entity =>
@@ -108,7 +108,7 @@ namespace BoschCartaoDigitalBackEnd.Database.Context
 
             modelBuilder.Entity<Evento>(entity =>
             {
-                entity.Property(e => e.DescricaNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
+                entity.Property(e => e.DescricaoNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
             });
 
             modelBuilder.Entity<Permissao>(entity =>
@@ -131,12 +131,12 @@ namespace BoschCartaoDigitalBackEnd.Database.Context
 
             modelBuilder.Entity<TipoPermissao>(entity =>
             {
-                entity.Property(e => e.DescricaNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
+                entity.Property(e => e.DescricaoNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
             });
 
             modelBuilder.Entity<UnidadeOrganizacional>(entity =>
             {
-                entity.Property(e => e.DescricaNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
+                entity.Property(e => e.DescricaoNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
             });
 
             OnModelCreatingPartial(modelBuilder);
