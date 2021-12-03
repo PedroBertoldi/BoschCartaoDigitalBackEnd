@@ -1,17 +1,11 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BoschCartaoDigitalBackEnd.Database.Context;
 using BoschCartaoDigitalBackEnd.Repository.AreaAdmin;
 using BoschCartaoDigitalBackEnd.Business.Commom;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
-using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Models.v1.Request.AreaAdmin;
-using BoschCartaoDigitalBackEnd.Models.v1.AreaAdmin;
-// using BoschCartaoDigitalBackEnd.Exceptions.AreaPublica;
+using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
+using BoschCartaoDigitalBackEnd.Exceptions.AreaAdministrativa;
 
 namespace BoschCartaoDigitalBackEnd.Business.AreaAdmin
 {
@@ -24,15 +18,19 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdmin
             _repository = repository;
         }
 
-        /// <summary>
-        /// Lista os beneficios de um evento.
-        /// </summary>
-        /// <param name="request">Parametros necessários</param>
-        /// <returns></returns>
-        public async Task<ListarBeneficiosEvento> ListaBeneficiosAsync(ListarBeneficiosEventoRequest request)
+        public async Task<List<Beneficio>> ListaBeneficiosAsync(ListarBeneficiosEventoRequest request)
         {
-            ListarBeneficiosEvento resposta = default;
-            return resposta;
+            List<Beneficio> lista = await _repository.ListaBeneficioIdEventoAsync((int)request.eventoId);
+            if(lista == null){
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(request.eventoId),
+                    Message = $"Nenhum beneficio encontrado com este eventoId: {(int)request.eventoId}",
+                });
+                return null;
+            }
+            return lista;
         }
+
     }
 }

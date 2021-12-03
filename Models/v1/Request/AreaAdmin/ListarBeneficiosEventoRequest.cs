@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace BoschCartaoDigitalBackEnd.Models.v1.Request.AreaAdmin
@@ -9,7 +8,7 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.Request.AreaAdmin
         /// Id do evento a ser consultado.
         /// </summary>
         [Required]
-        public int? EventoId { get; set; }
+        public int? eventoId { get; set; }
 
     }
 }
