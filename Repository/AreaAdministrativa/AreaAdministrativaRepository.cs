@@ -25,5 +25,17 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.Evento.Where(e => e.Id == id).FirstOrDefaultAsync();
         }
+        public async Task<Evento> AdicionarEventoAsync(Evento evento)
+        {
+            await _db.Evento.AddAsync(evento);
+            await _db.SaveChangesAsync();
+            return evento;
+        }
+        public async Task<Evento> EditarEventoAsync(Evento evento)
+        {
+            _db.Attach(evento).State = EntityState.Modified;
+            await _db.SaveChangesAsync();
+            return evento;
+        }
     }
 }
