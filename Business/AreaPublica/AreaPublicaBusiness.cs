@@ -15,7 +15,7 @@ using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Request;
 namespace BoschCartaoDigitalBackEnd.Business.AreaPublica
 {
 
-    public class AreaPublicaBusiness : BaseBussiness
+    public class AreaPublicaBusiness : BaseBusiness
     {
         private readonly AreaPublicaRepository _repository;
         public AreaPublicaBusiness(AreaPublicaRepository repository) : base()

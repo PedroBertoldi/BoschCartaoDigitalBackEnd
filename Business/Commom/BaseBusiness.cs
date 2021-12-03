@@ -3,10 +3,10 @@ using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 
 namespace BoschCartaoDigitalBackEnd.Business.Commom
 {
-    public class BaseBussiness
+    public class BaseBusiness
     {
         protected readonly List<ErrorModel> _errors;
-        public BaseBussiness()
+        public BaseBusiness()
         {
             _errors = new List<ErrorModel>();
         }
