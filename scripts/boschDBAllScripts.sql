@@ -1,13 +1,15 @@
 -----------------------------------------DATATBASE VERSION 2------------------------------------------------------------
 CREATE DATABASE projetoBosch;
 GO 
---DROP DATABASE projetoBosch
+
 CREATE TABLE projetoBosch.dbo.tipoPermissao (
     id int identity(1,1),
     descricao nvarchar(255) not null,
     descricaoNormalizada as cast(upper(rtrim(ltrim(descricao))) as nvarchar(255)),
     constraint pk_tipoPermissao_id primary key(id)
 );
+--Carga de Permissoes
+INSERT INTO projetoBosch.dbo.tipoPermissao(descricao) VALUES ('HRL'),('Entrega');
 
 CREATE TABLE projetoBosch.dbo.unidadeOrganizacional (
     id int identity(1,1),
@@ -35,6 +37,7 @@ CREATE TABLE projetoBosch.dbo.permissao(
     constraint fk_permissao_colaboradorID foreign key(colaboradorID) references colaborador(id),
     constraint fk_permissao_tipoPermissaoID foreign key(tipoPermissaoID) references tipoPermissao(id)
 );
+
 
 CREATE TABLE projetoBosch.dbo.evento(
     id int identity(1,1),
@@ -212,6 +215,15 @@ INSERT INTO projetoBosch.dbo.unidadeOrganizacional (descricao)
 -- unidadeOrganizacional --
 GO
 -- colaborador --
+
+--Carga de colaboradores para uso de permissões
+INSERT INTO projetoBosch.dbo.colaborador(cpf, nomeCompleto, dataNascimento, unidadeOrganizacionalID) VALUES ('11111111111', 'CAROLINA PODETUDO', '19801012', 1),
+																											('22222222222', 'MÁRIO RECURSOS', '19801011', 1),
+																											('33333333333', 'CLÁUDIO ENTREGAS','19801010', 1);
+--Carga das permissões dos colaboradores acima
+INSERT INTO projetoBosch.dbo.permissao(colaboradorID, tipoPermissaoID) VALUES (1,1), (1,2), (2,1),(3,2);
+
+
 INSERT INTO projetoBosch.dbo.colaborador(cpf, nomeCompleto, dataNascimento,unidadeOrganizacionalID)
 (
     SELECT DISTINCT REPLACE(REPLACE(CPF, '.', ''), '-',''), nomeCompleto, dataNascimento,id  FROM projetoBosch.dbo.Brinquedos$ B
@@ -323,23 +335,26 @@ GO
 INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 (
     SELECT C.id, 1 as idEvento, B.id FROM projetoBosch.dbo.CestaSeca$ CS
-    INNER JOIN projetoBosch.dbo.colaborador C ON C.cpf = CS.CPF
+    INNER JOIN projetoBosch.dbo.colaborador C ON C.cpf = REPLACE(REPLACE(CS.CPF, '.', ''), '-','')
     INNER JOIN projetoBosch.dbo.beneficio B ON B.descricaoNormalizada = 'CESTA SECA'
 );
 GO
 INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 (
     SELECT C.id, 1 as idEvento, B.id FROM projetoBosch.dbo.CestaFria$ CF
-    INNER JOIN projetoBosch.dbo.colaborador C ON C.cpf = CF.CPF
+    INNER JOIN projetoBosch.dbo.colaborador C ON C.cpf = REPLACE(REPLACE(CF.CPF, '.', ''), '-','')
     INNER JOIN projetoBosch.dbo.beneficio B ON B.descricaoNormalizada = 'CESTA FRIA'
 );
 GO
 INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID)
 (
     SELECT C.id, 1 as idEvento, B.id FROM projetoBosch.dbo.PresenteBosch$ PB
-    INNER JOIN projetoBosch.dbo.colaborador C ON C.cpf = PB.CPF
+    INNER JOIN projetoBosch.dbo.colaborador C ON C.cpf = REPLACE(REPLACE(PB.CPF, '.', ''), '-','')
     INNER JOIN projetoBosch.dbo.beneficio B ON B.descricaoNormalizada = 'PRESENTE'
 );
+
+--Carga dos direitos dos colaboradores inseridos para uso das permissões, apenas cesta seca e cesta fria
+INSERT INTO projetoBosch.dbo.direito(colaboradorID, eventoID, beneficioID) VALUES (1,1,1), (1,1,2), (2,1,1), (2,1,2), (3,1,1), (3,1,2);
 -- direito --
 GO
 ------------------------------------------------------------------------------------------------------------------------
@@ -595,6 +610,7 @@ END;
 
 -----------------------------------------INSERTS------------------------------------------------------------------------
 
+
 -----------------------------------------DELETES------------------------------------------------------------------------
 DROP TABLE projetoBosch.dbo.CestaSeca$;
 DROP TABLE projetoBosch.dbo.CestaFria$;
@@ -602,4 +618,3 @@ DROP TABLE projetoBosch.dbo.PresenteBosch$;
 DROP TABLE projetoBosch.dbo.MaterialEscolar$;
 DROP TABLE projetoBosch.dbo.Brinquedos$;
 -----------------------------------------DELETES------------------------------------------------------------------------
-
