@@ -8,7 +8,7 @@ using BoschCartaoDigitalBackEnd.Database.Context;
 using BoschCartaoDigitalBackEnd.Repository.AreaAdmin;
 using BoschCartaoDigitalBackEnd.Business.Commom;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
+using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Models.v1.Request.AreaAdmin;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaAdmin;
 // using BoschCartaoDigitalBackEnd.Exceptions.AreaPublica;
@@ -29,9 +29,9 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdmin
         /// </summary>
         /// <param name="request">Parametros necessários</param>
         /// <returns></returns>
-        public async Task<ListaBeneficiosEvento> ListaBeneficiosAsync(ListarBeneficiosEventoRequest request)
+        public async Task<ListarBeneficiosEvento> ListaBeneficiosAsync(ListarBeneficiosEventoRequest request)
         {
-            ListaBeneficiosEvento resposta = default;
+            ListarBeneficiosEvento resposta = default;
             return resposta;
         }
     }
