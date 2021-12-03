@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using BoschCartaoDigitalBackEnd.Business.AreaAdmin;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
 using BoschCartaoDigitalBackEnd.Models.v1.Request.AreaAdmin;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
+using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Models.v1.Responses.AreaAdmin;
 
 namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdmin
