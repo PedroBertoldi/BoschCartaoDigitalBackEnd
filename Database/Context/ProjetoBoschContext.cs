@@ -19,6 +19,7 @@ namespace BoschCartaoDigitalBackEnd.Database.Context
         }
 
         public virtual DbSet<Beneficio> Beneficio { get; set; }
+        public virtual DbSet<BeneficioEvento> BeneficioEvento { get; set; }
         public virtual DbSet<Colaborador> Colaborador { get; set; }
         public virtual DbSet<Direito> Direito { get; set; }
         public virtual DbSet<Evento> Evento { get; set; }
@@ -43,13 +44,31 @@ namespace BoschCartaoDigitalBackEnd.Database.Context
                 entity.Property(e => e.DescricaNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
             });
 
+            modelBuilder.Entity<BeneficioEvento>(entity =>
+            {
+                entity.HasKey(e => new { e.BeneficioId, e.EventoId })
+                    .HasName("pk_beneficioEvento_id");
+
+                entity.HasOne(d => d.Beneficio)
+                    .WithMany(p => p.BeneficioEvento)
+                    .HasForeignKey(d => d.BeneficioId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_beneficioEvento_beneficioID");
+
+                entity.HasOne(d => d.Evento)
+                    .WithMany(p => p.BeneficioEvento)
+                    .HasForeignKey(d => d.EventoId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_fk_beneficioEvento_beneficioID_eventoID");
+            });
+
             modelBuilder.Entity<Colaborador>(entity =>
             {
                 entity.Property(e => e.Cpf).IsUnicode(false);
 
-                entity.Property(e => e.Edv)
-                    .IsUnicode(false)
-                    .HasComputedColumnSql("(CONVERT([varchar](10),upper(rtrim(ltrim([id]+(55555))))))", false);
+                entity.Property(e => e.Edv).IsUnicode(false);
+
+                entity.Property(e => e.Senha).IsUnicode(false);
 
                 entity.HasOne(d => d.UnidadeOrganizacional)
                     .WithMany(p => p.Colaborador)

@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace BoschCartaoDigitalBackEnd.Models.v1.Request.Autenticacao
+namespace BoschCartaoDigitalBackEnd.Models.v1.Autenticacao.Request
 {
     public class LoginUserRequest
     {   

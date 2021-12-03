@@ -5,13 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
 using BoschCartaoDigitalBackEnd.Repository.AreaPublica;
-using BoschCartaoDigitalBackEnd.Models.v1.Request.AreaPublica;
-using Microsoft.AspNetCore.Mvc;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
 using System.Collections.Generic;
 using BoschCartaoDigitalBackEnd.Business.Commom;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica;
 using BoschCartaoDigitalBackEnd.Exceptions.AreaPublica;
+using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Request;
 
 namespace BoschCartaoDigitalBackEnd.Business.AreaPublica
 {
@@ -33,12 +32,15 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaPublica
             var evento = (eventoId == null) ? await _repository.BuscarEventoAtivoAsync()
                 : await _repository.BuscarEventoPorIdAsync((int)eventoId);
 
+            if (evento == null && eventoId == null)
+                evento = await _repository.BuscarProximoEventoAsync();
+
             if (evento == null)
             {
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(eventoId),
-                    Message = (eventoId == null) ? "Atualmente não existe nem um evento ativo"
+                    Message = (eventoId == null) ? "Atualmente não existe nem um evento ativo ou programado"
                         : $"Não foi encontrado nem um evento com o id: {eventoId}",
                 });
                 throw new OperacaoInvalidaException();

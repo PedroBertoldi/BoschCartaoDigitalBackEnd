@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace BoschCartaoDigitalBackEnd.Models.v1.Request.AreaPublica
+namespace BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Request
 {
     public class MeusBeneficiosRequest
     {

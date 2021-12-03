@@ -36,6 +36,8 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext
         [Column("EDV")]
         [StringLength(10)]
         public string Edv { get; set; }
+        [StringLength(15)]
+        public string Senha { get; set; }
 
         [ForeignKey(nameof(UnidadeOrganizacionalId))]
         [InverseProperty("Colaborador")]

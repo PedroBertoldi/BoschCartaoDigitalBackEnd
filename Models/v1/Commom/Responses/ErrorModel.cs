@@ -1,4 +1,4 @@
-namespace BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom
+namespace BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses
 {
     public class ErrorModel
     {

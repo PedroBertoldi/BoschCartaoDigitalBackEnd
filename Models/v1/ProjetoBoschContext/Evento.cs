@@ -13,6 +13,7 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext
     {
         public Evento()
         {
+            BeneficioEvento = new HashSet<BeneficioEvento>();
             Direito = new HashSet<Direito>();
         }
 
@@ -20,6 +21,9 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext
         [Column("id")]
         public int Id { get; set; }
         [Required]
+        [Column("nome")]
+        [StringLength(50)]
+        public string Nome { get; set; }
         [Column("descricao")]
         [StringLength(255)]
         public string Descricao { get; set; }
@@ -31,6 +35,8 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext
         [Column("dataFim", TypeName = "datetime")]
         public DateTime? DataFim { get; set; }
 
+        [InverseProperty("Evento")]
+        public virtual ICollection<BeneficioEvento> BeneficioEvento { get; set; }
         [InverseProperty("Evento")]
         public virtual ICollection<Direito> Direito { get; set; }
     }

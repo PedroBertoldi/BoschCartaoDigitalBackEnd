@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
+using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 
 namespace BoschCartaoDigitalBackEnd.Business.Commom
 {

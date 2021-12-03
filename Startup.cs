@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BoschCartaoDigitalBackEnd.Business.AreaPublica;
 using BoschCartaoDigitalBackEnd.Database.Context;
-using BoschCartaoDigitalBackEnd.Models.v1.Responses.Commom;
+using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Repository.AreaPublica;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
