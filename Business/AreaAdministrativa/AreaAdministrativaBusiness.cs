@@ -30,6 +30,21 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             return await _repository.BuscarEventoPorIdAsync(id);
         }
 
+        public async Task<Evento> BuscarEventoIdAsync(int id)
+        {
+            Evento evento = await _repository.BuscarEventoPorIdAsync(id);
+            if (evento == null)
+            {
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(id),
+                    Message = $"O Evento com o ID : {id} não foi encontrado",
+                });
+                throw new OperacaoInvalidaException();
+            }
+            return evento;
+        }
+
         public async Task<List<Beneficio>> ListaBeneficiosPorEventoAsync(int id)
         {
             List<Beneficio> lista = await _repository.ListaBeneficioIdEventoAsync((int)id);
@@ -178,7 +193,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
             return beneficio;
         }
-        private async Task ValidarRelacionamentoBeneficioEventoAsync(int beneficioId)
+
+        private async Task ValidarRelacionamentoBeneficioEventoIdBeneficioAsync(int beneficioId)
         {
             BeneficioEvento beneficioEvento = await _repository.BuscarBeneficioEventoIdBeneficioAsync(beneficioId);
             if(beneficioEvento != null){
@@ -191,7 +207,20 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
         }
 
-        private async Task ValidarRelacionamentoDireitoAsync(int beneficioId)
+        private async Task ValidarRelacionamentoBeneficioEventoIdEventoAsync(int eventoId)
+        {
+            List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdEventoAsync(eventoId);
+            if(beneficiosEvento != null){
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(eventoId),
+                    Message = $"Existe um BeneficioEvento com o este eventoId: {eventoId}.",
+                });
+                throw new OperacaoInvalidaException();
+            }
+        }
+
+        private async Task ValidarRelacionamentoDireitoIdBeneficioAsync(int beneficioId)
         {
             List<Direito> direitos = await _repository.BuscarDireitoIdBeneficioAsync(beneficioId);
             if(direitos != null){
@@ -199,6 +228,19 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 {
                     FieldName = nameof(beneficioId),
                     Message = $"Existe um Direito com o este beneficioId: {beneficioId}.",
+                });
+                throw new OperacaoInvalidaException();
+            }
+        }
+
+        private async Task ValidarRelacionamentoDireitoIdEventoAsync(int eventoId)
+        {
+            List<Direito> direitos = await _repository.BuscarDireitoIdEventoAsync(eventoId);
+            if(direitos != null){
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(eventoId),
+                    Message = $"Existe um Direito com o este eventoId: {eventoId}.",
                 });
                 throw new OperacaoInvalidaException();
             }
@@ -295,15 +337,48 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
         }
 
+        public async Task ExcluirDireitoIdEventoAsync(int eventoId)
+        {
+            List<Direito> direitos = await _repository.BuscarDireitoIdEventoAsync(eventoId);
+            if(direitos.Count > 0)
+            {
+                foreach (Direito direito in direitos)
+                {
+                    await _repository.ExcluirDireitoAsync(direito);
+                }
+            }
+            else
+            {
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(direitos),
+                    Message = $"Não existe um Direito com o seguinte eventoId: {eventoId}"
+                });
+            }
+        }
+
         public async Task ExcluirBeneficioAsync(int id)
         {
             try
             {
                 Beneficio beneficio = await BuscarBeneficioPorIdAsync(id);
-                await ValidarRelacionamentoBeneficioEventoAsync(id);
-                await ValidarRelacionamentoDireitoAsync(id);
+                await ValidarRelacionamentoBeneficioEventoIdBeneficioAsync(id);
+                await ValidarRelacionamentoDireitoIdBeneficioAsync(id);
 
                 await _repository.ExcluirBeneficioAsync(beneficio);
+            }
+            catch (OperacaoInvalidaException) {}
+        }
+
+        public async Task ExcluirEventoIdAsync(int id)
+        {
+            try
+            {
+                Evento evento = await BuscarEventoIdAsync(id);
+                await ValidarRelacionamentoBeneficioEventoIdEventoAsync(id);
+                await ValidarRelacionamentoDireitoIdEventoAsync(id);
+
+                await _repository.ExcluirEventoAsync(evento);
             }
             catch (OperacaoInvalidaException) {}
         }

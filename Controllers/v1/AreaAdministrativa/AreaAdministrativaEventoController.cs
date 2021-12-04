@@ -88,6 +88,21 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         }
 
         /// <summary>
+        /// Exclui um Evento pelo Id
+        /// </summary>
+        /// <param name="id">beneficioId do Direito a ser excluido</param>
+        [HttpDelete("Evento/{id}")]
+        public async Task<IActionResult> ExcluirEventoId([FromRoute] int? id)
+        {
+            if (id == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(id)));
+
+            await _business.ExcluirEventoIdAsync((int)id);
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
+        /// <summary>
         /// Lista os beneficios de um evento.
         /// </summary>
         /// <param name="id">Parametros necessários para a consulta</param>
@@ -204,12 +219,28 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// Exclui Direito pelo beneficioId.
         /// </summary>
         /// <param name="beneficioId">beneficioId do Direito a ser excluido</param>
-        [HttpDelete("Direito/{beneficioId}")]
+        [HttpDelete("Direito/Beneficio/{beneficioId}")]
         public async Task<IActionResult> ExcluirDireitoIdBeneficio([FromRoute] int? beneficioId)
         {
             if (beneficioId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(beneficioId)));
 
             await _business.ExcluirDireitoIdBeneficioAsync((int)beneficioId);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Exclui Direito pelo eventoId.
+        /// </summary>
+        /// <param name="eventoId">eventoId do Direito a ser excluido</param>
+        [HttpDelete("Direito/Evento/{eventoId}")]
+        public async Task<IActionResult> ExcluirDireitoIdEvento([FromRoute] int? eventoId)
+        {
+            if (eventoId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(eventoId)));
+
+            await _business.ExcluirDireitoIdEventoAsync((int)eventoId);
 
             var erros = _business.BuscarErros();
 
