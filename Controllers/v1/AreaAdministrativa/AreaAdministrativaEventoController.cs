@@ -92,6 +92,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="id">beneficioId do Direito a ser excluido</param>
         [HttpDelete("Evento/{id}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirEventoId([FromRoute] int? id)
         {
             if (id == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(id)));
@@ -173,6 +175,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="id">id do beneficio a ser excluido</param>
         [HttpDelete("Beneficio/{id}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirBeneficio([FromRoute] int? id)
         {
             if (id == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(id)));
@@ -189,6 +193,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="beneficioId">beneficioId do BeneficioEvento a ser excluido</param>
         [HttpDelete("BeneficioEvento/Beneficio/{beneficioId}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirBeneficioEventoIdBeneficio([FromRoute] int? beneficioId)
         {
             if (beneficioId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(beneficioId)));
@@ -205,6 +211,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="eventoId">eventoId do BeneficioEvento a ser excluido</param>
         [HttpDelete("BeneficioEvento/Evento/{eventoId}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirBeneficioEventoIdEvento([FromRoute] int? eventoId)
         {
             if (eventoId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(eventoId)));
@@ -221,6 +229,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="beneficioId">beneficioId do Direito a ser excluido</param>
         [HttpDelete("Direito/Beneficio/{beneficioId}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirDireitoIdBeneficio([FromRoute] int? beneficioId)
         {
             if (beneficioId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(beneficioId)));
@@ -237,6 +247,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="eventoId">eventoId do Direito a ser excluido</param>
         [HttpDelete("Direito/Evento/{eventoId}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirDireitoIdEvento([FromRoute] int? eventoId)
         {
             if (eventoId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(eventoId)));
