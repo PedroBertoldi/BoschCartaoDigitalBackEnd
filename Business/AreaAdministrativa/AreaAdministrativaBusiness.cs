@@ -197,8 +197,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         private async Task ValidarRelacionamentoBeneficioEventoIdBeneficioAsync(int beneficioId)
         {
-            BeneficioEvento beneficioEvento = await _repository.BuscarBeneficioEventoIdBeneficioAsync(beneficioId);
-            if(beneficioEvento != null){
+            List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdBeneficioAsync(beneficioId);
+            if(beneficiosEvento.Count > 0){
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(beneficioId),
@@ -211,7 +211,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         private async Task ValidarRelacionamentoBeneficioEventoIdEventoAsync(int eventoId)
         {
             List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdEventoAsync(eventoId);
-            if(beneficiosEvento != null){
+            if(beneficiosEvento.Count > 0){
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(eventoId),
@@ -224,7 +224,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         private async Task ValidarRelacionamentoDireitoIdBeneficioAsync(int beneficioId)
         {
             List<Direito> direitos = await _repository.BuscarDireitoIdBeneficioAsync(beneficioId);
-            if(direitos != null){
+            if(direitos.Count > 0){
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(beneficioId),
@@ -237,7 +237,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         private async Task ValidarRelacionamentoDireitoIdEventoAsync(int eventoId)
         {
             List<Direito> direitos = await _repository.BuscarDireitoIdEventoAsync(eventoId);
-            if(direitos != null){
+            if(direitos.Count > 0){
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(eventoId),
@@ -283,16 +283,19 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         public async Task ExcluirBeneficioEventoIdBeneficioAsync(int beneficioId)
         {
-            BeneficioEvento beneficioEvento = await _repository.BuscarBeneficioEventoIdBeneficioAsync(beneficioId);
-            if(beneficioEvento != null)
+            List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdBeneficioAsync(beneficioId);
+            if(beneficiosEvento.Count > 0)
             {
-                await _repository.ExcluirBeneficioEventoAsync(beneficioEvento);
+                foreach (BeneficioEvento beneficioEvento in beneficiosEvento)
+                {
+                    await _repository.ExcluirBeneficioEventoAsync(beneficioEvento);
+                }
             }
             else
             {
                 _errors.Add(new ErrorModel
                 {
-                    FieldName = nameof(beneficioEvento),
+                    FieldName = nameof(beneficiosEvento),
                     Message = $"Não existe um BeneficioEvento com o seguinte beneficioId: {beneficioId}"
                 });
             }
@@ -377,8 +380,15 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             {
                 Beneficio beneficio = await BuscarBeneficioPorIdAsync(id);
 
-                await ExcluirBeneficioEventoIdBeneficioAsync(id);
-                await ExcluirDireitoIdBeneficioAsync(id);
+                List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdBeneficioAsync(id);
+                if(beneficiosEvento.Count > 0){
+                    await ExcluirBeneficioEventoIdBeneficioAsync(id);
+                }
+
+                List<Direito> direitos = await _repository.BuscarDireitoIdBeneficioAsync(id);
+                if(direitos.Count > 0){
+                    await ExcluirDireitoIdBeneficioAsync(id);
+                }
 
                 await _repository.ExcluirBeneficioAsync(beneficio);
             }
@@ -404,8 +414,15 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             {
                 Evento evento = await BuscarEventoIdAsync(id);
 
-                await ExcluirBeneficioEventoIdEventoAsync(id);
-                await ExcluirDireitoIdEventoAsync(id);
+                List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdEventoAsync(id);
+                if(beneficiosEvento.Count > 0){
+                    await ExcluirBeneficioEventoIdEventoAsync(id);
+                }
+
+                List<Direito> direitos = await _repository.BuscarDireitoIdEventoAsync(id);
+                if(direitos.Count > 0){
+                    await ExcluirDireitoIdEventoAsync(id);
+                }
 
                 await _repository.ExcluirEventoAsync(evento);
             }
