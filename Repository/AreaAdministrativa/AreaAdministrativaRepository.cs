@@ -38,7 +38,7 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.BeneficioEvento.Where(e => e.BeneficioId == beneficioId).FirstOrDefaultAsync();
         }
-        public async Task<List<Direito>> BuscarDereitoIdBeneficioAsync(int beneficioId)
+        public async Task<List<Direito>> BuscarDireitoIdBeneficioAsync(int beneficioId)
         {
             return await _db.Direito.Where(e => e.BeneficioId == beneficioId).ToListAsync();
         }
@@ -96,6 +96,12 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
             _db.Entry(beneficio).State = EntityState.Deleted;
             await _db.SaveChangesAsync();
             return beneficio;
+        }
+        public async Task<Direito> ExcluirDireitoAsync(Direito direito)
+        {
+            _db.Entry(direito).State = EntityState.Deleted;
+            await _db.SaveChangesAsync();
+            return direito;
         }
     }
 }
