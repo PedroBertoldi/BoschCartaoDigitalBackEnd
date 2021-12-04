@@ -101,7 +101,9 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaPublica
 
         public async Task<Colaborador> BuscarIndicadoAsync(int idEvento, int idColaborador)
         {
-            var indicado = await _db.Direito.Where(d => d.ColaboradorId == idColaborador && d.EventoId==idEvento).Include(d => d.Indicado).AsSplitQuery().FirstOrDefaultAsync();
+            //Exclui da busca todos os direitos que foram retirados
+            //Assume que todos os direitos não-retirados OU possuem um mesmo indicado OU não possuem indicado
+            var indicado = await _db.Direito.Where(d => d.ColaboradorId == idColaborador && d.EventoId==idEvento && d.RetiradoId==null).Include(d => d.Indicado).AsSplitQuery().FirstOrDefaultAsync();
             return indicado.Indicado;
         }
         
