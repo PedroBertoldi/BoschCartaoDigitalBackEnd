@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request;
@@ -6,8 +7,8 @@ using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
 using BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Business.Commom;
-using System;
 using BoschCartaoDigitalBackEnd.Exceptions.AreaPublica;
+// using Microsoft.EntityFrameworkCore;
 
 namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 {
@@ -178,6 +179,31 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
             return beneficio;
         }
+        private async Task ValidarRelacionamentoBeneficioEventoAsync(int beneficioId)
+        {
+            BeneficioEvento beneficioEvento = await _repository.BuscarBeneficioEventoIdBeneficioAsync(beneficioId);
+            if(beneficioEvento != null){
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(beneficioId),
+                    Message = $"Existe um BeneficioEvento com o este beneficioId: {beneficioId}.",
+                });
+                throw new OperacaoInvalidaException();
+            }
+        }
+
+        private async Task ValidarRelacionamentoDireitoAsync(int beneficioId)
+        {
+            List<Direito> direitos = await _repository.BuscarDereitoIdBeneficioAsync(beneficioId);
+            if(direitos != null){
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(beneficioId),
+                    Message = $"Existe um Direito com o este beneficioId: {beneficioId}.",
+                });
+                throw new OperacaoInvalidaException();
+            }
+        }
 
         private async Task<Beneficio> BuscarBeneficioPorIdAsync(int id)
         {
@@ -211,6 +237,67 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             catch (OperacaoInvalidaException) {}
 
             return beneficio;
+        }
+
+        public async Task ExcluirBeneficioEventoIdBeneficioAsync(int beneficioId)
+        {
+            BeneficioEvento beneficioEvento = await _repository.BuscarBeneficioEventoIdBeneficioAsync(beneficioId);
+            if(beneficioEvento != null)
+            {
+                await _repository.ExcluirBeneficioEventoAsync(beneficioEvento);
+            }
+            else
+            {
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(beneficioEvento),
+                    Message = $"Não existe um BeneficioEvento com o seguinte beneficioId: {beneficioId}"
+                });
+            }
+        }
+
+        public async Task ExcluirBeneficioEventoIdEventoAsync(int eventoId)
+        {
+            List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdEventoAsync(eventoId);
+            if(beneficiosEvento.Count > 0)
+            {
+                foreach (BeneficioEvento beneficioEvento in beneficiosEvento)
+                {
+                    await _repository.ExcluirBeneficioEventoAsync(beneficioEvento);
+                }
+            }
+            else
+            {
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(beneficiosEvento),
+                    Message = $"Não existe um BeneficioEvento com o seguinte eventoId: {eventoId}"
+                });
+            }
+        }
+
+        public async Task ExcluirBeneficioAsync(int id)
+        {
+            try
+            {
+                Beneficio beneficio = await BuscarBeneficioPorIdAsync(id);
+                await ValidarRelacionamentoBeneficioEventoAsync(id);
+                await ValidarRelacionamentoDireitoAsync(id);
+
+                // try
+                // {
+                await _repository.ExcluirBeneficioAsync(beneficio);
+                // }
+                // catch (DbUpdateException e)
+                // {
+                //     _errors.Add(new ErrorModel
+                //     {
+                //         FieldName = nameof(beneficio),
+                //         Message = $"Não foi possível excluir o beneficio: {beneficio.Descricao}, exception: {e.Message}",
+                //     });
+                // }
+            }
+            catch (OperacaoInvalidaException) {}
         }
     }
 }
