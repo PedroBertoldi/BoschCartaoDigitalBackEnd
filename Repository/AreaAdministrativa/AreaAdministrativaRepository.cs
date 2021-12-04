@@ -70,5 +70,12 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
             await _db.SaveChangesAsync();
             return beneficioEvento;
         }
+
+        public async Task<Beneficio> EditarBeneficioAsync(Beneficio beneficio)
+        {
+            _db.Attach(beneficio).State = EntityState.Modified;
+            await _db.SaveChangesAsync();
+            return beneficio;
+        }
     }
 }

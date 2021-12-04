@@ -111,7 +111,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         [HttpPost("Beneficio")]
         [ProducesResponseType(typeof(BeneficioResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CadastrarBeneficio([FromBody] CadastroBeneficioRequest request)
+        public async Task<IActionResult> CadastrarBeneficio([FromBody] CriarEditarBeneficioRequest request)
         {
             var beneficio = await _business.CadastrarBeneficioAsync(request);
             var erros = _business.BuscarErros();
@@ -131,6 +131,22 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var relacao = await _business.CriarRelacaoBeneficioEventoAsync(request);
             var erros = _business.BuscarErros();
             return (erros != null) ? BadRequest(erros) : Ok(_mapper.Map<BeneficioEventoResponse>(relacao));
+        }
+
+        /// <summary>
+        /// Modifica as informações de um Beneficio.
+        /// </summary>
+        /// <param name="id">id do beneficio a ser modificado</param>
+        /// <param name="request">Parametros necessários para a modificação</param>
+        [HttpPut("Beneficio/{id}")]
+        public async Task<IActionResult> EditarBeneficio([FromRoute] int? id, [FromBody] CriarEditarBeneficioRequest request)
+        {
+            if (id == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(id)));
+
+            var beneficio = await _business.EditarBeneficioAsync((int)id, request);
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? Ok(_mapper.Map<BeneficioResponse>(beneficio)) : BadRequest(erros);
         }
     }
 }

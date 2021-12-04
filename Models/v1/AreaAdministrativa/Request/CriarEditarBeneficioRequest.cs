@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request
 {
-    public class CadastroBeneficioRequest
+    public class CriarEditarBeneficioRequest
     {
         /// <summary>
         /// Nome do beneficio.
