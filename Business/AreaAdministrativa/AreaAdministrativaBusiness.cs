@@ -59,6 +59,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
             return lista;
         }
+
         public async Task<Evento> CriarEventoAsync(CriarEditarEventoRequest request)
         {
             Evento retono = default;
@@ -381,6 +382,25 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 await _repository.ExcluirEventoAsync(evento);
             }
             catch (OperacaoInvalidaException) {}
+        }
+
+        public async Task ExcluirEventoIdCascataAsync(int id)
+        {
+            Evento evento = default;
+            try
+            {
+                evento = await BuscarEventoIdAsync(id);
+            }
+            catch (OperacaoInvalidaException) {}
+
+            try
+            {
+                await ExcluirBeneficioEventoIdEventoAsync(id);
+                await ExcluirDireitoIdEventoAsync(id);
+
+                await _repository.ExcluirEventoAsync(evento);
+            }
+            catch {}
         }
 
         public async Task<List<Beneficio>> BuscarTodosBeneficiosAsync()

@@ -96,7 +96,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         {
             if (id == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(id)));
 
-            await _business.ExcluirEventoIdAsync((int)id);
+            // await _business.ExcluirEventoIdAsync((int)id);
+            await _business.ExcluirEventoIdCascataAsync((int)id);
             var erros = _business.BuscarErros();
 
             return (erros == null) ? NoContent() : BadRequest(erros);
