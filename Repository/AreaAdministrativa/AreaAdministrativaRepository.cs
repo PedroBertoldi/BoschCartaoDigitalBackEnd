@@ -26,14 +26,25 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.Evento.Where(e => e.Id == id).FirstOrDefaultAsync();
         }
-
-        public async Task<List<Beneficio>> ListaBeneficioIdEventoAsync(int? eventoId)
+        public async Task<List<Beneficio>> ListaBeneficioIdEventoAsync(int eventoId)
         {
-            Evento con = await _db.Evento.Where(e => e.Id == (int)eventoId)
+            Evento con = await _db.Evento.Where(e => e.Id == eventoId)
                 .Include( d => d.BeneficioEvento )
                 .ThenInclude( d => d.Beneficio )
                 .AsSplitQuery().FirstOrDefaultAsync();
             return ((con==null) ? null : con.BeneficioEvento.Select(c => c.Beneficio ).ToList());
+        }
+        public async Task<BeneficioEvento> BuscarBeneficioEventoIdBeneficioAsync(int beneficioId)
+        {
+            return await _db.BeneficioEvento.Where(e => e.BeneficioId == beneficioId).FirstOrDefaultAsync();
+        }
+        public async Task<List<Direito>> BuscarDereitoIdBeneficioAsync(int beneficioId)
+        {
+            return await _db.Direito.Where(e => e.BeneficioId == beneficioId).ToListAsync();
+        }
+        public async Task<List<BeneficioEvento>> BuscarBeneficioEventoIdEventoAsync(int eventoId)
+        {
+            return await _db.BeneficioEvento.Where(e => e.EventoId == eventoId).ToListAsync();
         }
         public async Task<Evento> AdicionarEventoAsync(Evento evento)
         {
@@ -52,7 +63,6 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
             var descricaoLimpa = descricao.NormalizarString();
             return await _db.Beneficio.Where(b => b.DescricaoNormalizada == descricaoLimpa).FirstOrDefaultAsync();
         }
-
         public async Task<Beneficio> CriarBeneficioAsync(Beneficio beneficio)
         {
             await _db.Beneficio.AddAsync(beneficio);
@@ -63,17 +73,27 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.Beneficio.Where(b => b.Id == id).FirstOrDefaultAsync();
         }
-
         public async Task<BeneficioEvento> CriarRelacaoBeneficioEventoAsync(BeneficioEvento beneficioEvento)
         {
             await _db.BeneficioEvento.AddAsync(beneficioEvento);
             await _db.SaveChangesAsync();
             return beneficioEvento;
         }
-
         public async Task<Beneficio> EditarBeneficioAsync(Beneficio beneficio)
         {
             _db.Attach(beneficio).State = EntityState.Modified;
+            await _db.SaveChangesAsync();
+            return beneficio;
+        }
+        public async Task<BeneficioEvento> ExcluirBeneficioEventoAsync(BeneficioEvento beneficioEvento)
+        {
+            _db.Entry(beneficioEvento).State = EntityState.Deleted;
+            await _db.SaveChangesAsync();
+            return beneficioEvento;
+        }
+        public async Task<Beneficio> ExcluirBeneficioAsync(Beneficio beneficio)
+        {
+            _db.Entry(beneficio).State = EntityState.Deleted;
             await _db.SaveChangesAsync();
             return beneficio;
         }
