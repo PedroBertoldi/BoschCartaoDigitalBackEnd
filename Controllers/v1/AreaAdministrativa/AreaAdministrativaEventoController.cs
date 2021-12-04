@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BoschCartaoDigitalBackEnd.Business.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Extentions;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
@@ -285,6 +286,23 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
 
             return (erros == null) ? Ok(_mapper.Map<BeneficioEventoResponse>(beneficioEvento)) : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Busca os direitos relacionados a um colaborador, seus direitos como direitos indicados.
+        /// </summary>
+        /// <param name="request">Parametros necessários para a busca</param>
+        [HttpGet("buscar-direitos")]
+        [ProducesResponseType(typeof(List<DireitoResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> BuscarDireitos([FromQuery] DireitosColaboradorRequest request)
+        {
+            var idEvento = request.EventoID;
+            var idBeneficiario = request.idColaborador;
+            var resposta = await _business.BuscarDireitosPorIdColaboradorAsync((int)idEvento, (int)idBeneficiario);
+            
+            var erros = _business.BuscarErros();
+            return (erros == null) ? Ok(_mapper.Map<List<DireitoResponse>>(resposta)) : BadRequest(erros);
         }
     }
 }

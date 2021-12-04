@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
@@ -404,6 +405,46 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             var beneficio = await CadastrarBeneficioAsync(new CriarEditarBeneficioRequest { Beneficio = request.Beneficio });
             var beneficioEvento = await CriarRelacaoBeneficioEventoAsync(new RelacaoBeneficioEventoRequest { BeneficioId = beneficio.Id, EventoId = request.EventoId });
             return beneficioEvento;
+        }
+
+               /// <summary>
+        /// Busca um colaborador por seu ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
+        {
+            var colaborador = await _repository.BuscarColaboradorPorIdAsync(id);
+            if (colaborador == null)
+            {
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(id),
+                    Message = $"Não foi encontrado um colaborador com o ID: {id}",
+                });
+                throw new OperacaoInvalidaException();
+            }
+            return colaborador;
+        }
+
+
+
+        /// <summary>
+        /// Faz uma busca nos direitos e retorna os direitos disponíveis para o usuário.
+        /// </summary>
+        public async Task<List<Direito>> BuscarDireitosPorIdColaboradorAsync(int eventoId, int colaboradorId)
+        {
+            try{
+                var testarColaboradorID = await BuscarColaboradorPorIdAsync(colaboradorId);
+                var testarEventoID = await BuscarEventoIdAsync(eventoId);
+            }
+            catch(OperacaoInvalidaException){
+                return null;
+            }
+            return await _repository.BuscarDireitosPorIdColaboradorAsync(eventoId, colaboradorId);
+     
+
+
         }
     }
 }

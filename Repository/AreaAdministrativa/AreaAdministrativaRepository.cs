@@ -117,5 +117,26 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.Beneficio.ToListAsync();
         }
+
+
+
+        public async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
+        {
+            return await _db.Colaborador.FindAsync(id);
+        }
+
+        public async Task<List<Direito>> BuscarDireitosPorIdColaboradorAsync(int eventoId, int colaboradorId)
+        {
+            return await _db.Direito.Where(d => d.EventoId == eventoId && d.ColaboradorId == colaboradorId)
+                .Include(d => d.Indicado).AsSplitQuery()
+                .Include(d => d.Colaborador).AsSplitQuery()
+                .Include(d => d.Beneficio).AsSplitQuery()
+                .Include(d => d.Retirado).AsSplitQuery()
+                .ToListAsync();
+        }
+
+
+
+
     }
 }
