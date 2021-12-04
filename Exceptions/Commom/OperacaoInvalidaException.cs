@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace BoschCartaoDigitalBackEnd.Exceptions.AreaAdministrativa
+namespace BoschCartaoDigitalBackEnd.Exceptions.Commom
 {
     public class OperacaoInvalidaException : Exception
     {

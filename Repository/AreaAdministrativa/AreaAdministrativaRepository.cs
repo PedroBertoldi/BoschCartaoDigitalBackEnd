@@ -77,5 +77,10 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
             await _db.SaveChangesAsync();
             return beneficio;
         }
+
+        public async Task<List<Beneficio>> BuscarTodosBeneficiosAsync()
+        {
+            return await _db.Beneficio.ToListAsync();
+        }
     }
 }

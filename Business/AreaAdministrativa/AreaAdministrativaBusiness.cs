@@ -7,7 +7,7 @@ using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
 using BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Business.Commom;
 using System;
-using BoschCartaoDigitalBackEnd.Exceptions.AreaPublica;
+using BoschCartaoDigitalBackEnd.Exceptions.Commom;
 
 namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 {
@@ -30,7 +30,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             return await _repository.BuscarEventoPorIdAsync(id);
         }
 
-        public async Task<List<Beneficio>> ListaBeneficiosAsync(int id)
+        public async Task<List<Beneficio>> ListaBeneficiosPorEventoAsync(int id)
         {
             List<Beneficio> lista = await _repository.ListaBeneficioIdEventoAsync((int)id);
             if (lista == null)
@@ -208,9 +208,32 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 await _repository.EditarBeneficioAsync(beneficio);
 
             }
-            catch (OperacaoInvalidaException) {}
+            catch (OperacaoInvalidaException) { }
 
             return beneficio;
+        }
+
+        public async Task<List<Beneficio>> BuscarTodosBeneficiosAsync()
+        {
+            return await _repository.BuscarTodosBeneficiosAsync();
+        }
+
+        public async Task<Beneficio> BuscarUnicoBeneficioPorIdAsync(int id)
+        {
+            Beneficio retorno = default;
+            try
+            {
+                retorno = await BuscarBeneficioPorIdAsync(id);
+            }
+            catch (OperacaoInvalidaException) { }
+            return retorno;
+        }
+
+        public async Task<BeneficioEvento> CriarEAtrelarBeneficioAsync(CriarEAtrelarBeneficioRequest request)
+        {
+            var beneficio = await CadastrarBeneficioAsync(new CriarEditarBeneficioRequest { Beneficio = request.Beneficio });
+            var beneficioEvento = await CriarRelacaoBeneficioEventoAsync(new RelacaoBeneficioEventoRequest { BeneficioId = beneficio.Id, EventoId = request.EventoId });
+            return beneficioEvento;
         }
     }
 }

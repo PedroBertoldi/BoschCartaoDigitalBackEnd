@@ -8,9 +8,9 @@ using BoschCartaoDigitalBackEnd.Repository.AreaPublica;
 using System.Collections.Generic;
 using BoschCartaoDigitalBackEnd.Business.Commom;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica;
-using BoschCartaoDigitalBackEnd.Exceptions.AreaPublica;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Request;
+using BoschCartaoDigitalBackEnd.Exceptions.Commom;
 
 namespace BoschCartaoDigitalBackEnd.Business.AreaPublica
 {
