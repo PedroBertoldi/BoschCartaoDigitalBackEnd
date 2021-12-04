@@ -8,9 +8,9 @@ using BoschCartaoDigitalBackEnd.Repository.AreaPublica;
 using System.Collections.Generic;
 using BoschCartaoDigitalBackEnd.Business.Commom;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica;
-using BoschCartaoDigitalBackEnd.Exceptions.AreaPublica;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Request;
+using BoschCartaoDigitalBackEnd.Exceptions.Commom;
 
 namespace BoschCartaoDigitalBackEnd.Business.AreaPublica
 {
@@ -198,5 +198,39 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaPublica
         {
             return await _repository.BuscarDireitosAsync(eventoId, userId);
         }
+
+
+        /// <summary>
+        /// Busca indicado pelo id e data de nascimento do titular
+        /// </summary>
+        public async Task<Colaborador> BuscarIndicadoAsync(BuscarIndicadoRequest request){
+            Colaborador indicado = default;
+            try
+            {
+                var evento = await BuscarEventoAsync(request.EventoID);
+                var colaborador = await BuscarColaboradorPorIdAsync((int)request.ColaboradorId);
+                indicado = await _repository.BuscarIndicadoAsync(colaborador.Id, evento.Id);
+                if (colaborador.DataNascimento != request.DataNascimento)
+                {
+                    _errors.Add(new ErrorModel
+                    {
+                        FieldName = nameof(request.DataNascimento),
+                        Message = $"Não foi encontrado um colaborador com a data de nascimento: {request.DataNascimento}",
+                    });
+                    throw new OperacaoInvalidaException();
+                }
+
+            }
+            catch (OperacaoInvalidaException)
+            {
+                return null;
+            }
+
+            return indicado;
+        }
+
+
+
+
     }
 }

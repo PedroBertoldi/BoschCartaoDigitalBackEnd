@@ -99,17 +99,11 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaPublica
             .ToListAsync();
         }
 
-        //Falta criar a Business
-        public async Task<Colaborador> BuscarIndicadoPorIdColaborador(int idTitular, int idEvento, int idBeneficio)
+        public async Task<Colaborador> BuscarIndicadoAsync(int idEvento, int idColaborador)
         {
-            var x = await _db.Direito.Where(d => d.EventoId == idEvento && d.ColaboradorId==idTitular && d.BeneficioId==idBeneficio).Include(d => d.Indicado)
-            .AsSplitQuery().FirstOrDefaultAsync();
-            //tratar o valor aqui
-
-            return (x!=null)? x.Indicado:null;
-
+            var indicado = await _db.Direito.Where(d => d.ColaboradorId == idColaborador && d.EventoId==idEvento).Include(d => d.Indicado).AsSplitQuery().FirstOrDefaultAsync();
+            return indicado.Indicado;
         }
-
         
     }
 }

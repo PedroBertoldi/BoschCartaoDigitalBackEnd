@@ -24,6 +24,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using BoschCartaoDigitalBackEnd.Repository.AreaOperacional;
+using BoschCartaoDigitalBackEnd.Business.AreaOperacional;
 
 namespace BoschCartaoDigitalBackEnd
 {
@@ -60,10 +62,12 @@ namespace BoschCartaoDigitalBackEnd
             //Repository
             services.AddScoped<AreaPublicaRepository>();
             services.AddScoped<AreaAdministrativaRepository>();
+            services.AddScoped<AreaOperacionalRepository>();
 
             //Business
             services.AddScoped<AreaPublicaBusiness>();
             services.AddScoped<AreaAdministrativaBusiness>();
+            services.AddScoped<AreaOperacionalBusiness>();
 
             services.AddAuthentication(options =>
             {

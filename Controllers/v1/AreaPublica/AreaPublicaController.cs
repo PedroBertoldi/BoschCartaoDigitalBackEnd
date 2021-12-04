@@ -87,5 +87,26 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaPublica
 
             return (colaborador == null) ? NotFound(new ErrorResponse("Colaborador não encontrado")) : Ok(_mapper.Map<ColaboradorResponse>(colaborador));
         }
+
+        /// <summary>
+        /// Busca um indicado a partir do id e data de nascimento do titular dos direitos
+        /// </summary>
+        /// <param name="request">Parametros necessários</param>
+        [AllowAnonymous] //Verificar isso aqui, não sei se é a melhor coisa
+        [HttpGet("buscar-indicado")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> BuscarIndicado([FromQuery] BuscarIndicadoRequest request)
+        {
+            if (request.ColaboradorId == null) return BadRequest(new ErrorResponse("id é um campo obrigatório"));
+            if (request.DataNascimento == null) return BadRequest(new ErrorResponse("Data de Nascimento é um campo obrigatório"));
+
+
+            var colaboradorIndicado = await _business.BuscarIndicadoAsync(request);
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? Ok(_mapper.Map<ColaboradorResponse>(colaboradorIndicado)) : BadRequest(erros);
+
+        }
     }
 }

@@ -74,7 +74,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="id">id do evento a ser modificado</param>
         /// <param name="request">Parametros necessários para a modificação</param>
-        [HttpPut("{id}")]
+        [HttpPut("Evento/{id}")]
         [ProducesResponseType(typeof(EventoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> EditarEvento([FromRoute] int? id, [FromBody] CriarEditarEventoRequest request)
@@ -99,7 +99,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         {
             if(id == null) return BadRequest(new ErrorModel("ID é um parametro necessário", nameof(id)));
 
-            var resposta = await _business.ListaBeneficiosAsync((int)id);
+            var resposta = await _business.ListaBeneficiosPorEventoAsync((int)id);
             var erros = _business.BuscarErros();
             return (erros == null) ? Ok(_mapper.Map<List<ListarBeneficiosEventoResponse>>(resposta)) : BadRequest(erros);
         }
@@ -116,7 +116,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var beneficio = await _business.CadastrarBeneficioAsync(request);
             var erros = _business.BuscarErros();
 
-            return(erros == null) ? Created("", _mapper.Map<BeneficioResponse>(beneficio)) : BadRequest(erros); 
+            return(erros == null) ? Created(HttpContext.GetLocationURI($"api/beneficio/{beneficio.Id}"), _mapper.Map<BeneficioResponse>(beneficio)) : 
+                BadRequest(erros); 
         }
         
         /// <summary>
@@ -215,5 +216,44 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros == null) ? NoContent() : BadRequest(erros);
         }
 
+        /// <summary>
+        /// Retorna todos os beneficios cadastrados independente de evento
+        /// </summary>
+        [HttpGet("Beneficio")]
+        [ProducesResponseType(typeof(List<BeneficioResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> BuscarTodosBeneficios()
+        {
+            var beneficios = await _business.BuscarTodosBeneficiosAsync();
+            var erros = _business.BuscarErros();
+            return (erros == null) ? Ok(_mapper.Map<List<BeneficioResponse>>(beneficios)) : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Retorna um beneficio em especifico
+        /// </summary>
+        /// <param name="id">Id do beneficio</param>
+        [HttpGet("Beneficio/{id}")]
+        [ProducesResponseType(typeof(BeneficioResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> BuscarBeneficioPorID([FromRoute] int? id)
+        {
+            if (id == null) return BadRequest(new ErrorResponse("ID é um campo necessário", nameof(id)));
+
+            var beneficio = await _business.BuscarUnicoBeneficioPorIdAsync((int)id);
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? Ok(_mapper.Map<BeneficioResponse>(beneficio)) : BadRequest(erros);
+        }
+
+        [HttpPost("Evento/criar-beneficio-no-evento")]
+        [ProducesResponseType(typeof(BeneficioEventoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CriarBeneficioEAtrelar([FromBody] CriarEAtrelarBeneficioRequest request)
+        {
+            var beneficioEvento = await _business.CriarEAtrelarBeneficioAsync(request);
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? Ok(_mapper.Map<BeneficioEventoResponse>(beneficioEvento)) : BadRequest(erros);
+        }
     }
 }
