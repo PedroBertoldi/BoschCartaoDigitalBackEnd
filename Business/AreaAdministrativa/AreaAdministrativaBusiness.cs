@@ -194,7 +194,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         private async Task ValidarRelacionamentoDireitoAsync(int beneficioId)
         {
-            List<Direito> direitos = await _repository.BuscarDereitoIdBeneficioAsync(beneficioId);
+            List<Direito> direitos = await _repository.BuscarDireitoIdBeneficioAsync(beneficioId);
             if(direitos != null){
                 _errors.Add(new ErrorModel
                 {
@@ -276,6 +276,26 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
         }
 
+        public async Task ExcluirDireitoIdBeneficioAsync(int beneficioId)
+        {
+            List<Direito> direitos = await _repository.BuscarDireitoIdBeneficioAsync(beneficioId);
+            if(direitos.Count > 0)
+            {
+                foreach (Direito direito in direitos)
+                {
+                    await _repository.ExcluirDireitoAsync(direito);
+                }
+            }
+            else
+            {
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(direitos),
+                    Message = $"Não existe um Direito com o seguinte beneficioId: {beneficioId}"
+                });
+            }
+        }
+
         public async Task ExcluirBeneficioAsync(int id)
         {
             try
@@ -284,18 +304,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 await ValidarRelacionamentoBeneficioEventoAsync(id);
                 await ValidarRelacionamentoDireitoAsync(id);
 
-                // try
-                // {
                 await _repository.ExcluirBeneficioAsync(beneficio);
-                // }
-                // catch (DbUpdateException e)
-                // {
-                //     _errors.Add(new ErrorModel
-                //     {
-                //         FieldName = nameof(beneficio),
-                //         Message = $"Não foi possível excluir o beneficio: {beneficio.Descricao}, exception: {e.Message}",
-                //     });
-                // }
             }
             catch (OperacaoInvalidaException) {}
         }
