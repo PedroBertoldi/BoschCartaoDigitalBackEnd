@@ -59,6 +59,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
             return lista;
         }
+
         public async Task<Evento> CriarEventoAsync(CriarEditarEventoRequest request)
         {
             Evento retono = default;
@@ -370,6 +371,20 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             catch (OperacaoInvalidaException) {}
         }
 
+        public async Task ExcluirBeneficioCascataAsync(int id)
+        {
+            try
+            {
+                Beneficio beneficio = await BuscarBeneficioPorIdAsync(id);
+
+                await ExcluirBeneficioEventoIdBeneficioAsync(id);
+                await ExcluirDireitoIdBeneficioAsync(id);
+
+                await _repository.ExcluirBeneficioAsync(beneficio);
+            }
+            catch (OperacaoInvalidaException) {}
+        }
+
         public async Task ExcluirEventoIdAsync(int id)
         {
             try
@@ -377,6 +392,20 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 Evento evento = await BuscarEventoIdAsync(id);
                 await ValidarRelacionamentoBeneficioEventoIdEventoAsync(id);
                 await ValidarRelacionamentoDireitoIdEventoAsync(id);
+
+                await _repository.ExcluirEventoAsync(evento);
+            }
+            catch (OperacaoInvalidaException) {}
+        }
+
+        public async Task ExcluirEventoIdCascataAsync(int id)
+        {
+            try
+            {
+                Evento evento = await BuscarEventoIdAsync(id);
+
+                await ExcluirBeneficioEventoIdEventoAsync(id);
+                await ExcluirDireitoIdEventoAsync(id);
 
                 await _repository.ExcluirEventoAsync(evento);
             }
