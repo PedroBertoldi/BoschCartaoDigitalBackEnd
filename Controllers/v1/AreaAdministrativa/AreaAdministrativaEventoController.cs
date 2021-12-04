@@ -199,5 +199,21 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros == null) ? NoContent() : BadRequest(erros);
         }
 
+        /// <summary>
+        /// Exclui Direito pelo beneficioId.
+        /// </summary>
+        /// <param name="beneficioId">beneficioId do Direito a ser excluido</param>
+        [HttpDelete("Direito/{beneficioId}")]
+        public async Task<IActionResult> ExcluirDireitoIdBeneficio([FromRoute] int? beneficioId)
+        {
+            if (beneficioId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(beneficioId)));
+
+            await _business.ExcluirDireitoIdBeneficioAsync((int)beneficioId);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
     }
 }
