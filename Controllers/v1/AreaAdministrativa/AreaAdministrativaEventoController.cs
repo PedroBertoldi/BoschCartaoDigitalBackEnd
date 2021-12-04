@@ -139,6 +139,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// <param name="id">id do beneficio a ser modificado</param>
         /// <param name="request">Parametros necessários para a modificação</param>
         [HttpPut("Beneficio/{id}")]
+        [ProducesResponseType(typeof(BeneficioResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> EditarBeneficio([FromRoute] int? id, [FromBody] CriarEditarBeneficioRequest request)
         {
             if (id == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(id)));
@@ -148,5 +150,54 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
 
             return (erros == null) ? Ok(_mapper.Map<BeneficioResponse>(beneficio)) : BadRequest(erros);
         }
+
+        /// <summary>
+        /// Exclui um Beneficio que não esteja vinculado a um Evento e nem a um Direito.
+        /// </summary>
+        /// <param name="id">id do beneficio a ser excluido</param>
+        [HttpDelete("Beneficio/{id}")]
+        public async Task<IActionResult> ExcluirBeneficio([FromRoute] int? id)
+        {
+            if (id == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(id)));
+
+            await _business.ExcluirBeneficioAsync((int)id);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Exclui BeneficioEvento pelo beneficioId.
+        /// </summary>
+        /// <param name="beneficioId">beneficioId do BeneficioEvento a ser excluido</param>
+        [HttpDelete("BeneficioEvento/Beneficio/{beneficioId}")]
+        public async Task<IActionResult> ExcluirBeneficioEventoIdBeneficio([FromRoute] int? beneficioId)
+        {
+            if (beneficioId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(beneficioId)));
+
+            await _business.ExcluirBeneficioEventoIdBeneficioAsync((int)beneficioId);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Exclui BeneficioEvento pelo eventoId.
+        /// </summary>
+        /// <param name="eventoId">eventoId do BeneficioEvento a ser excluido</param>
+        [HttpDelete("BeneficioEvento/Evento/{eventoId}")]
+        public async Task<IActionResult> ExcluirBeneficioEventoIdEvento([FromRoute] int? eventoId)
+        {
+            if (eventoId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(eventoId)));
+
+            await _business.ExcluirBeneficioEventoIdEventoAsync((int)eventoId);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
     }
 }
