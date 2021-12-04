@@ -371,6 +371,20 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             catch (OperacaoInvalidaException) {}
         }
 
+        public async Task ExcluirBeneficioCascataAsync(int id)
+        {
+            try
+            {
+                Beneficio beneficio = await BuscarBeneficioPorIdAsync(id);
+
+                await ExcluirBeneficioEventoIdBeneficioAsync(id);
+                await ExcluirDireitoIdBeneficioAsync(id);
+
+                await _repository.ExcluirBeneficioAsync(beneficio);
+            }
+            catch (OperacaoInvalidaException) {}
+        }
+
         public async Task ExcluirEventoIdAsync(int id)
         {
             try
@@ -386,21 +400,16 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         public async Task ExcluirEventoIdCascataAsync(int id)
         {
-            Evento evento = default;
             try
             {
-                evento = await BuscarEventoIdAsync(id);
-            }
-            catch (OperacaoInvalidaException) {}
+                Evento evento = await BuscarEventoIdAsync(id);
 
-            try
-            {
                 await ExcluirBeneficioEventoIdEventoAsync(id);
                 await ExcluirDireitoIdEventoAsync(id);
 
                 await _repository.ExcluirEventoAsync(evento);
             }
-            catch {}
+            catch (OperacaoInvalidaException) {}
         }
 
         public async Task<List<Beneficio>> BuscarTodosBeneficiosAsync()

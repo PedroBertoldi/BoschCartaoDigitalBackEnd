@@ -88,7 +88,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         }
 
         /// <summary>
-        /// Exclui um Evento pelo Id
+        /// Exclui um Evento pelo Id em cascata
         /// </summary>
         /// <param name="id">beneficioId do Direito a ser excluido</param>
         [HttpDelete("Evento/{id}")]
@@ -169,7 +169,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         }
 
         /// <summary>
-        /// Exclui um Beneficio que não esteja vinculado a um Evento e nem a um Direito.
+        /// Exclui um Beneficio pelo id em cascata.
         /// </summary>
         /// <param name="id">id do beneficio a ser excluido</param>
         [HttpDelete("Beneficio/{id}")]
@@ -177,8 +177,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         {
             if (id == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(id)));
 
-            await _business.ExcluirBeneficioAsync((int)id);
-
+            // await _business.ExcluirBeneficioAsync((int)id);
+            await _business.ExcluirBeneficioCascataAsync((int)id);
             var erros = _business.BuscarErros();
 
             return (erros == null) ? NoContent() : BadRequest(erros);
