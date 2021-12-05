@@ -10,6 +10,8 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa
     public class DireitosColaboradorAgrupadosSemEventoResponse
     {
         public ColaboradorResponse Colaborador { get; set; }
+        public ColaboradorResponse Indicado { get; set; }
+
         public List<DireitoInfoReduzidaResponseADM> Direitos { get; set; }
 
     }

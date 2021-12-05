@@ -6,6 +6,7 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa
     public class DireitosColaboradorAgrupadosSemEvento
     {
         public Colaborador Colaborador { get; set; }
+        public Colaborador Indicado { get; set; }
         public List<Direito> Direitos { get; set; }
 
     }

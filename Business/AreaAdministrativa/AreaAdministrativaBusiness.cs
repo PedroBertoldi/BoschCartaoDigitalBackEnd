@@ -469,12 +469,14 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 foreach (Colaborador c in colaboradores) //Itera por cada colaborador
                 {
                     var idC = c.Id;
+                    var indicado = await _repository.BuscarIndicado(idEvento, idC);
                     var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync(idEvento, idC);
                     if(direitos.Count>0){ //Se o colaborador possui pelo menos 1 direito, coloca ele na resposta
                     var direitosSalvar = new DireitosColaboradorAgrupadosSemEvento
                         {
                             Colaborador = c,
                             Direitos = direitos,
+                            Indicado=indicado,
                         };
                         resposta.ColaboradoresDireitos.Add(direitosSalvar);
                     }
