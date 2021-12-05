@@ -46,6 +46,10 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.Direito.Where(e => e.EventoId == eventoId).ToListAsync();
         }
+        public async Task<List<Direito>> BuscarDireitoIdColaboradorIdEventoIdBeneficioAsync(int colaboradorId, int eventoId, int beneficioId)
+        {
+            return await _db.Direito.Where( e => e.ColaboradorId == colaboradorId && e.EventoId == eventoId && e.BeneficioId == beneficioId ).ToListAsync();
+        }
         public async Task<List<BeneficioEvento>> BuscarBeneficioEventoIdEventoAsync(int eventoId)
         {
             return await _db.BeneficioEvento.Where(e => e.EventoId == eventoId).ToListAsync();
@@ -159,6 +163,13 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         public async Task<Colaborador> CadastrarNovoColaborador(Colaborador colaborador)
         {
             await _db.Colaborador.AddAsync(colaborador);
+            await _db.SaveChangesAsync();
+            return colaborador;
+        }
+
+        public async Task<Colaborador> EditarColaborador(Colaborador colaborador)
+        {
+            _db.Attach(colaborador).State = EntityState.Modified;
             await _db.SaveChangesAsync();
             return colaborador;
         }

@@ -166,7 +166,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 NomeCompleto = request.NomeCompleto,
                 DataNascimento = request.DataNascimento,
                 UnidadeOrganizacionalId = request.UnidadeOrganizacionalId,
-                Edv = request.EDV,
+                Edv = request.Edv,
             };
             List<CriarEditarBeneficiarioDireitoResponseResumido> beneficiosResponse = new List<CriarEditarBeneficiarioDireitoResponseResumido>();
             
@@ -185,6 +185,89 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                     {
                         return null;
                     }
+
+                    if(beneficio.QtdBeneficio > 0){
+                        for (int i = 0; i < beneficio.QtdBeneficio; i++)
+                        {
+                            Direito direito = new Direito
+                            {
+                                ColaboradorId = colaborador.Id,
+                                EventoId = (int)beneficio.EventoId,
+                                BeneficioId = (int)beneficio.BeneficioId,
+                            };
+
+                            //fazer tratamento para se não conseguir criar um direito
+                            await _repository.CadastrarDireito(direito);
+                        }
+                    }
+
+                    beneficiosResponse.Add(new CriarEditarBeneficiarioDireitoResponseResumido{
+                        EventoId = (int)beneficio.EventoId,
+                        BeneficioId = (int)beneficio.BeneficioId,
+                        QtdBeneficio = (int)beneficio.QtdBeneficio
+                    });
+                }
+            }
+
+            var temp = new BeneficiarioResponse
+            {
+                Id = colaborador.Id,
+                Cpf = colaborador.Cpf,
+                NomeCompleto = colaborador.NomeCompleto,
+                DataNascimento = colaborador.DataNascimento,
+                UnidadeOrganizacionalId = colaborador.UnidadeOrganizacionalId,
+                Edv = colaborador.Edv,
+                beneficios = beneficiosResponse,
+            };
+
+            return temp;
+        }
+
+        public async Task<BeneficiarioResponse> EditarBeneficiarioAsync(int id, CriarEditarBeneficiarioRequest request)
+        {
+            try
+            {
+                await ValidarUnidadeOrganizacionalIdAsync((int)request.UnidadeOrganizacionalId);
+            }
+            catch (OperacaoInvalidaException)
+            {
+                return null;
+            }
+
+            Colaborador colaborador = await _repository.BuscarColaboradorPorIdAsync(id);
+            colaborador.Cpf = request.Cpf;
+            colaborador.NomeCompleto = request.NomeCompleto;
+            colaborador.DataNascimento = request.DataNascimento;
+            colaborador.UnidadeOrganizacionalId = request.UnidadeOrganizacionalId;
+            colaborador.Edv = request.Edv;
+
+            //VERIFICAR COM O GRUPO SE VAI SER NECESSARIO FAZER UMA VALIDAÇÃO ANTES DE TENTAR ATUALIZAR UM COLABORADOR
+            await _repository.EditarColaborador(colaborador);
+
+            List<CriarEditarBeneficiarioDireitoResponseResumido> beneficiosResponse = new List<CriarEditarBeneficiarioDireitoResponseResumido>();
+
+            if(request.beneficios.Count > 0){
+                foreach (CriarEditarBeneficiarioDireitoRequestResumido beneficio in request.beneficios)
+                {
+                    try
+                    {
+                        await ValidarEventoIdAsync((int)beneficio.EventoId);
+                        await ValidarBeneficioIdAsync((int)beneficio.BeneficioId);
+                    }
+                    catch (OperacaoInvalidaException)
+                    {
+                        return null;
+                    }
+
+                    //REMOVENDO TODOS OS DIREITOS PARA INSERIR NOVOS QUE ESTAO ATUALIZADOS
+                    List<Direito> direitos = await _repository.BuscarDireitoIdColaboradorIdEventoIdBeneficioAsync(colaborador.Id, (int)beneficio.EventoId, (int)beneficio.BeneficioId);
+                    if(direitos.Count > 0){
+                        foreach (Direito direito in direitos)
+                        {
+                            await _repository.ExcluirDireitoAsync(direito);
+                        }
+                    }
+                    //REMOVENDO TODOS OS DIREITOS PARA INSERIR NOVOS QUE ESTAO ATUALIZADOS
 
                     if(beneficio.QtdBeneficio > 0){
                         for (int i = 0; i < beneficio.QtdBeneficio; i++)

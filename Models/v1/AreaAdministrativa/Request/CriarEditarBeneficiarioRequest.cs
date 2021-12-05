@@ -37,7 +37,7 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request
         /// </summary>
         [Required(AllowEmptyStrings = false)]
         [MaxLength(10)]
-        public string EDV { get; set; }
+        public string Edv { get; set; }
 
         /* 
         criar um modelo de direitos resumido

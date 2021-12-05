@@ -360,5 +360,18 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
 
             return (erros == null) ? Ok(_mapper.Map<BeneficiarioResponse>(beneficiario)) : BadRequest(erros);
         }
+
+        [HttpPut("Beneficiarios/{id}")]
+        [ProducesResponseType(typeof(BeneficiarioResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> EditarBeneficiario([FromRoute] int? id, [FromBody] CriarEditarBeneficiarioRequest request)
+        {
+            if (id == null) return BadRequest(new ErrorResponse("ID é um campo necessário", nameof(id)));
+
+            var beneficiario = await _business.EditarBeneficiarioAsync((int)id, request);
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? Ok(_mapper.Map<BeneficiarioResponse>(beneficiario)) : BadRequest(erros);
+        }
     }
 }
