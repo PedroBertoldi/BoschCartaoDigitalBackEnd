@@ -135,7 +135,11 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
                 .ToListAsync();
 
         }
-
+        public async Task<List<Colaborador>> BuscarTodosColaboradoresBosch()
+        {
+            //Retorna apenas os colaboradores que trabalham na Bosch
+            return await _db.Colaborador.Where(d => d.Edv!=null).ToListAsync();
+        }
 
 
 

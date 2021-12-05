@@ -305,5 +305,22 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
             return (erros == null) ? Ok(_mapper.Map<DireitosPorColaboradorAgrupadosResponseADM>(resposta)) : BadRequest(erros);
         }
+
+        /// <summary>
+        /// Todos os direitos de cada colaborador em um evento
+        /// </summary>
+        /// <param name="id">Id do evento</param>
+        [HttpGet("TodosDireitos/{id}")]
+        [ProducesResponseType(typeof(DireitosTodosColaboradoresAgrupadosResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> BuscarDireitosTodosColaboradores([FromRoute] int? id)
+        {
+
+            var resposta = await _business.BuscarTodosDireitosPorColaborador((int)id);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? Ok(_mapper.Map<DireitosTodosColaboradoresAgrupadosResponse>(resposta)) : BadRequest(erros);
+        }
     }
 }

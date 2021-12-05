@@ -456,5 +456,36 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
 
         }
+
+        public async Task<DireitosTodosColaboradoresAgrupados> BuscarTodosDireitosPorColaborador(int idEvento)
+        {
+            //Instancia o objeto que contém o evento e o objeto que contém colabs-direitos
+            var resposta = new DireitosTodosColaboradoresAgrupados();
+            try
+            {
+                resposta.Evento = await BuscarEventoIdAsync(idEvento); //Associa o evento ao objeto a partir do id do evento
+                resposta.ColaboradoresDireitos = new List<DireitosColaboradorAgrupadosSemEvento>();  //instancia o objeto que contém 1 colaborador e seus direitos
+                var colaboradores = await _repository.BuscarTodosColaboradoresBosch(); //Obtém a lista de todos os colaboradores
+                foreach (Colaborador c in colaboradores) //Itera por cada colaborador
+                {
+                    var idC = c.Id;
+                    var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync(idEvento, idC);
+                    if(direitos.Count>0){ //Se o colaborador possui pelo menos 1 direito, coloca ele na resposta
+                    var direitosSalvar = new DireitosColaboradorAgrupadosSemEvento
+                        {
+                            Colaborador = c,
+                            Direitos = direitos,
+                        };
+                        resposta.ColaboradoresDireitos.Add(direitosSalvar);
+                    }
+
+                } 
+            }
+            catch(OperacaoInvalidaException){
+                return null;
+            }
+
+            return resposta;
+    }
     }
 }
