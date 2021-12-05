@@ -141,6 +141,14 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
             return await _db.Colaborador.Where(d => d.Edv!=null).ToListAsync();
         }
 
+        public async Task<Colaborador> BuscarIndicado(int idEvento, int idColaborador)
+        { //Assume que um colaborador ou sempre terá o mesmo indicado para seus benefícios, ou não terá nenhum
+            var d = await _db.Direito.Where(d => d.EventoId == idEvento && d.ColaboradorId == idColaborador && d.Indicado!=null).FirstOrDefaultAsync();
+            if(d==null){return null;}
+            return d.Indicado;
+
+        }
+
 
 
     }

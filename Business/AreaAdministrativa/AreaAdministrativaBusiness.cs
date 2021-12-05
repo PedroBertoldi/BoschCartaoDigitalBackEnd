@@ -486,12 +486,15 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             try{
                 var colab = await BuscarColaboradorPorIdAsync((int)request.idColaborador);
                 var evento = await BuscarEventoIdAsync((int)request.EventoID);
+                var indicado = await _repository.BuscarIndicado((int)request.EventoID, (int)request.idColaborador);
                 var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync((int)request.EventoID, (int)request.idColaborador);
                 resposta = new DireitosPorColaboradorAgrupadosADM
                 {
                     Colaborador=colab,
                     Evento = evento,
                     Direitos =direitos,
+                    Indicado = indicado,
+
                 };
             }
             catch(OperacaoInvalidaException){
@@ -515,12 +518,14 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 foreach (Colaborador c in colaboradores) //Itera por cada colaborador
                 {
                     var idC = c.Id;
+                    var indicado = await _repository.BuscarIndicado(idEvento, idC);
                     var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync(idEvento, idC);
                     if(direitos.Count>0){ //Se o colaborador possui pelo menos 1 direito, coloca ele na resposta
                     var direitosSalvar = new DireitosColaboradorAgrupadosSemEvento
                         {
                             Colaborador = c,
                             Direitos = direitos,
+                            Indicado=indicado,
                         };
                         resposta.ColaboradoresDireitos.Add(direitosSalvar);
                     }
