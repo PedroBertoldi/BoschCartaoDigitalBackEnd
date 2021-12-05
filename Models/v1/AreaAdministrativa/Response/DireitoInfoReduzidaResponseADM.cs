@@ -9,7 +9,7 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Response
         public long Id { get; set; }
         public DateTime? DataRetirada { get; set; }
         public BeneficioResponse Beneficio { get; set; }
-        public ColaboradorResponse Indicado { get; set; }
+        //public ColaboradorResponse Indicado { get; set; }
         public ColaboradorResponse Retirado { get; set; }
         
     }

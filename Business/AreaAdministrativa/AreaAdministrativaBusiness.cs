@@ -440,12 +440,15 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             try{
                 var colab = await BuscarColaboradorPorIdAsync((int)request.idColaborador);
                 var evento = await BuscarEventoIdAsync((int)request.EventoID);
+                var indicado = await _repository.BuscarIndicado((int)request.EventoID, (int)request.idColaborador);
                 var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync((int)request.EventoID, (int)request.idColaborador);
                 resposta = new DireitosPorColaboradorAgrupadosADM
                 {
                     Colaborador=colab,
                     Evento = evento,
                     Direitos =direitos,
+                    Indicado = indicado,
+
                 };
             }
             catch(OperacaoInvalidaException){

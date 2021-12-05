@@ -8,6 +8,8 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa
         public virtual Evento Evento { get; set; }
 
         public Colaborador Colaborador { get; set; }
+        public Colaborador Indicado { get; set; }
+
         public List<Direito> Direitos { get; set; }
 
     }
