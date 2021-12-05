@@ -68,7 +68,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros != null) ? BadRequest(erros) :
                 Created(HttpContext.GetLocationURI($"api/AreaAdministrativa/Evento/{evento.Id}"), _mapper.Map<EventoResponse>(evento));
         }
-        
+
         /// <summary>
         /// Modifica as informações de um evento.
         /// </summary>
@@ -137,7 +137,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return(erros == null) ? Created(HttpContext.GetLocationURI($"api/beneficio/{beneficio.Id}"), _mapper.Map<BeneficioResponse>(beneficio)) : 
                 BadRequest(erros); 
         }
-        
+
         /// <summary>
         /// Cria uma relação entre um beneficio e um evento.
         /// </summary>
