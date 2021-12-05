@@ -350,6 +350,10 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros == null) ? Ok(_mapper.Map<List<UnidadeOrganizacionalResponse>>(resposta)) : BadRequest(erros);
         }
 
+        /// <summary>
+        /// Cadastra ou atualiza um colaborador e adiciona seus direitos de acordo com um evento.
+        /// </summary>
+        /// <param name="request">Parametros necessarios para a ação ser realizada</param>
         [HttpPost("Beneficiarios")]
         [ProducesResponseType(typeof(BeneficiarioResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -361,6 +365,11 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros == null) ? Ok(_mapper.Map<BeneficiarioResponse>(beneficiario)) : BadRequest(erros);
         }
 
+        /// <summary>
+        /// Atualiza um colaborador e atualiza seus direitos de acordo com um evento.
+        /// </summary>
+        /// <param name="id">id do Colaborador a ser atualizado</param>
+        /// <param name="request">Parametros necessarios para a ação ser realizada</param>
         [HttpPut("Beneficiarios/{id}")]
         [ProducesResponseType(typeof(BeneficiarioResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -388,7 +397,6 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             if (eventoId == null) return BadRequest(new ErrorResponse("O ID do evento é obrigatório", nameof(eventoId)));
 
             await _business.ExcluirDireitoIdColaboradorIdEventoAsync((int)colaboradorId, (int)eventoId);
-
             var erros = _business.BuscarErros();
 
             return (erros == null) ? NoContent() : BadRequest(erros);
