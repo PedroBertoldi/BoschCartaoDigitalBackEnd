@@ -292,7 +292,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         }
 
         /// <summary>
-        /// Busca os direitos relacionados a um colaborador, seus direitos como direitos indicados.
+        /// Busca todos os direitos relacionados a um colaborador
         /// </summary>
         /// <param name="request">Parametros necessários para a busca</param>
         [AllowAnonymous]
@@ -308,7 +308,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         }
 
         /// <summary>
-        /// Todos os direitos de cada colaborador em um evento
+        /// Retorna todos os direitos de todos os colaboradores
         /// </summary>
         /// <param name="id">Id do evento</param>
         [HttpGet("TodosDireitos/{id}")]
@@ -322,6 +322,20 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
 
             return (erros == null) ? Ok(_mapper.Map<DireitosTodosColaboradoresAgrupadosResponse>(resposta)) : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Lista todas as unidades organizacionais
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("listar-unidade-organizacional")]
+        [ProducesResponseType(typeof(List<UnidadeOrganizacionalResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ListarUnidadeOrganizacional()
+        {        
+            var resposta = await _business.listarUnidadeOrganizacionalAsync();
+            var erros = _business.BuscarErros();
+            return (erros == null) ? Ok(_mapper.Map<List<UnidadeOrganizacionalResponse>>(resposta)) : BadRequest(erros);
         }
     }
 }

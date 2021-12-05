@@ -149,6 +149,11 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
 
         }
 
+        public async Task<List<UnidadeOrganizacional>> listarUnidadeOrganizacional()
+        {
+            return await _db.UnidadeOrganizacional.ToListAsync();
+        }
+
 
 
     }

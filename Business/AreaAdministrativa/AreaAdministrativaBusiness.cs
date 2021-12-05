@@ -538,5 +538,11 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
             return resposta;
     }
+
+
+        public async Task<List<UnidadeOrganizacional>> listarUnidadeOrganizacionalAsync()
+        {
+            return await _repository.listarUnidadeOrganizacional();
+        }
     }
 }
