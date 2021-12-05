@@ -117,5 +117,44 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.Beneficio.ToListAsync();
         }
+
+
+
+        public async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
+        {
+            return await _db.Colaborador.FindAsync(id);
+        }
+
+        public async Task<List<Direito>> BuscarDireitosPorIdColaboradorAsync(int eventoId, int colaboradorId)
+        {
+            return await _db.Direito.Where(d => d.EventoId == eventoId && d.ColaboradorId == colaboradorId)
+                .Include(d => d.Indicado).AsSplitQuery()
+                .Include(d => d.Beneficio).AsSplitQuery()
+                .Include(d => d.Retirado).AsSplitQuery()
+                .Include(d => d.Colaborador.UnidadeOrganizacional).AsSplitQuery()
+                .ToListAsync();
+
+        }
+        public async Task<List<Colaborador>> BuscarTodosColaboradoresBosch()
+        {
+            //Retorna apenas os colaboradores que trabalham na Bosch
+            return await _db.Colaborador.Where(d => d.Edv!=null).ToListAsync();
+        }
+
+        public async Task<Colaborador> BuscarIndicado(int idEvento, int idColaborador)
+        { //Assume que um colaborador ou sempre terá o mesmo indicado para seus benefícios, ou não terá nenhum
+            var d = await _db.Direito.Where(d => d.EventoId == idEvento && d.ColaboradorId == idColaborador && d.Indicado!=null).FirstOrDefaultAsync();
+            if(d==null){return null;}
+            return d.Indicado;
+
+        }
+
+        public async Task<List<UnidadeOrganizacional>> listarUnidadeOrganizacional()
+        {
+            return await _db.UnidadeOrganizacional.ToListAsync();
+        }
+
+
+
     }
 }

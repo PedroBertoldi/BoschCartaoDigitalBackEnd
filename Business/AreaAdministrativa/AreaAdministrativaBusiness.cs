@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
@@ -450,6 +451,98 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             var beneficio = await CadastrarBeneficioAsync(new CriarEditarBeneficioRequest { Beneficio = request.Beneficio });
             var beneficioEvento = await CriarRelacaoBeneficioEventoAsync(new RelacaoBeneficioEventoRequest { BeneficioId = beneficio.Id, EventoId = request.EventoId });
             return beneficioEvento;
+        }
+
+               /// <summary>
+        /// Busca um colaborador por seu ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
+        {
+            var colaborador = await _repository.BuscarColaboradorPorIdAsync(id);
+            if (colaborador == null)
+            {
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(id),
+                    Message = $"Não foi encontrado um colaborador com o ID: {id}",
+                });
+                throw new OperacaoInvalidaException();
+            }
+            return colaborador;
+        }
+
+
+
+        /// <summary>
+        /// Busca todos os direitos de um colaborador e os direitos de outros colaboradores que o indicaram para retirada.
+        /// </summary>
+        /// <param name="request">Parametros necessários</param>
+        /// <returns></returns>
+        public async Task<DireitosPorColaboradorAgrupadosADM> BuscarDireitosPorIdColaboradorAsync(DireitosColaboradorRequest request)
+        {
+            DireitosPorColaboradorAgrupadosADM resposta = default;
+            try{
+                var colab = await BuscarColaboradorPorIdAsync((int)request.idColaborador);
+                var evento = await BuscarEventoIdAsync((int)request.EventoID);
+                var indicado = await _repository.BuscarIndicado((int)request.EventoID, (int)request.idColaborador);
+                var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync((int)request.EventoID, (int)request.idColaborador);
+                resposta = new DireitosPorColaboradorAgrupadosADM
+                {
+                    Colaborador=colab,
+                    Evento = evento,
+                    Direitos =direitos,
+                    Indicado = indicado,
+
+                };
+            }
+            catch(OperacaoInvalidaException){
+                return null;
+            }
+            return resposta;
+     
+
+
+        }
+
+        public async Task<DireitosTodosColaboradoresAgrupados> BuscarTodosDireitosPorColaborador(int idEvento)
+        {
+            //Instancia o objeto que contém o evento e o objeto que contém colabs-direitos
+            var resposta = new DireitosTodosColaboradoresAgrupados();
+            try
+            {
+                resposta.Evento = await BuscarEventoIdAsync(idEvento); //Associa o evento ao objeto a partir do id do evento
+                resposta.ColaboradoresDireitos = new List<DireitosColaboradorAgrupadosSemEvento>();  //instancia o objeto que contém 1 colaborador e seus direitos
+                var colaboradores = await _repository.BuscarTodosColaboradoresBosch(); //Obtém a lista de todos os colaboradores
+                foreach (Colaborador c in colaboradores) //Itera por cada colaborador
+                {
+                    var idC = c.Id;
+                    var indicado = await _repository.BuscarIndicado(idEvento, idC);
+                    var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync(idEvento, idC);
+                    if(direitos.Count>0){ //Se o colaborador possui pelo menos 1 direito, coloca ele na resposta
+                    var direitosSalvar = new DireitosColaboradorAgrupadosSemEvento
+                        {
+                            Colaborador = c,
+                            Direitos = direitos,
+                            Indicado=indicado,
+                        };
+                        resposta.ColaboradoresDireitos.Add(direitosSalvar);
+                    }
+
+                } 
+            }
+            catch(OperacaoInvalidaException){
+                return null;
+            }
+
+            return resposta;
+    }
+
+
+        public async Task<List<UnidadeOrganizacional>> listarUnidadeOrganizacionalAsync()
+        {
+            return await _repository.listarUnidadeOrganizacional();
         }
     }
 }

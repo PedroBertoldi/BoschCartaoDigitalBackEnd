@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BoschCartaoDigitalBackEnd.Business.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Extentions;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
@@ -10,6 +11,8 @@ using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext.Response;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
 {
@@ -298,6 +301,53 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
 
             return (erros == null) ? Ok(_mapper.Map<BeneficioEventoResponse>(beneficioEvento)) : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Busca todos os direitos relacionados a um colaborador
+        /// </summary>
+        /// <param name="request">Parametros necessários para a busca</param>
+        [AllowAnonymous]
+        [HttpGet("buscar-direitos")]
+        [ProducesResponseType(typeof(DireitosPorColaboradorAgrupadosResponseADM), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> BuscarDireitos([FromQuery] DireitosColaboradorRequest request)
+        {
+            var resposta = await _business.BuscarDireitosPorIdColaboradorAsync(request);
+            
+            var erros = _business.BuscarErros();
+            return (erros == null) ? Ok(_mapper.Map<DireitosPorColaboradorAgrupadosResponseADM>(resposta)) : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Retorna todos os direitos de todos os colaboradores
+        /// </summary>
+        /// <param name="id">Id do evento</param>
+        [HttpGet("TodosDireitos/{id}")]
+        [ProducesResponseType(typeof(DireitosTodosColaboradoresAgrupadosResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> BuscarDireitosTodosColaboradores([FromRoute] int? id)
+        {
+
+            var resposta = await _business.BuscarTodosDireitosPorColaborador((int)id);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? Ok(_mapper.Map<DireitosTodosColaboradoresAgrupadosResponse>(resposta)) : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Lista todas as unidades organizacionais
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("listar-unidade-organizacional")]
+        [ProducesResponseType(typeof(List<UnidadeOrganizacionalResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ListarUnidadeOrganizacional()
+        {        
+            var resposta = await _business.listarUnidadeOrganizacionalAsync();
+            var erros = _business.BuscarErros();
+            return (erros == null) ? Ok(_mapper.Map<List<UnidadeOrganizacionalResponse>>(resposta)) : BadRequest(erros);
         }
     }
 }
