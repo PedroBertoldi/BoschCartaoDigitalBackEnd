@@ -161,17 +161,24 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 return null;
             }
 
-            Colaborador colaborador = new Colaborador{
-                Cpf = request.Cpf,
-                NomeCompleto = request.NomeCompleto,
-                DataNascimento = request.DataNascimento,
-                UnidadeOrganizacionalId = request.UnidadeOrganizacionalId,
-                Edv = request.Edv,
-            };
             List<CriarEditarBeneficiarioDireitoResponseResumido> beneficiosResponse = new List<CriarEditarBeneficiarioDireitoResponseResumido>();
-            
-            //VERIFICAR COM O GRUPO SE VAI SER NECESSARIO FAZER UMA VALIDAÇÃO ANTES DE TENTAR INSERIR UM NOVO COLABORADOR
-            await _repository.CadastrarNovoColaborador(colaborador);
+            Colaborador colaborador = await _repository.BuscarColaboradorCpfEdvDataNascimentoAsync(request.Cpf, request.Edv, (DateTime)request.DataNascimento);
+            if(colaborador != null){
+                colaborador.NomeCompleto = request.NomeCompleto;
+                colaborador.UnidadeOrganizacionalId = request.UnidadeOrganizacionalId;
+
+                await _repository.EditarColaborador(colaborador);
+            }else{
+                colaborador = new Colaborador{
+                    Cpf = request.Cpf,
+                    NomeCompleto = request.NomeCompleto,
+                    DataNascimento = request.DataNascimento,
+                    UnidadeOrganizacionalId = request.UnidadeOrganizacionalId,
+                    Edv = request.Edv,
+                };
+                //VERIFICAR COM O GRUPO SE VAI SER NECESSARIO FAZER UMA VALIDAÇÃO ANTES DE TENTAR INSERIR UM NOVO COLABORADOR
+                await _repository.CadastrarNovoColaborador(colaborador);
+            }
 
             if(request.beneficios.Count > 0){
                 foreach (CriarEditarBeneficiarioDireitoRequestResumido beneficio in request.beneficios)

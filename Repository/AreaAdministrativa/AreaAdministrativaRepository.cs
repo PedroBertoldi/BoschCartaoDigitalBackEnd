@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -131,6 +132,10 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         public async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
         {
             return await _db.Colaborador.FindAsync(id);
+        }
+        public async Task<Colaborador> BuscarColaboradorCpfEdvDataNascimentoAsync(string Cpf, string Edv, DateTime DataNascimento)
+        {
+            return await _db.Colaborador.Where( e => e.Cpf == Cpf && e.Edv == Edv && e.DataNascimento == DataNascimento ).FirstOrDefaultAsync();
         }
 
         public async Task<List<Direito>> BuscarDireitosPorIdColaboradorAsync(int eventoId, int colaboradorId)
