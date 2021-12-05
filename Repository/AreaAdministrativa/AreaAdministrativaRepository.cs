@@ -129,10 +129,11 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.Direito.Where(d => d.EventoId == eventoId && d.ColaboradorId == colaboradorId)
                 .Include(d => d.Indicado).AsSplitQuery()
-                .Include(d => d.Colaborador).AsSplitQuery()
                 .Include(d => d.Beneficio).AsSplitQuery()
                 .Include(d => d.Retirado).AsSplitQuery()
+                .Include(d => d.Colaborador.UnidadeOrganizacional).AsSplitQuery()
                 .ToListAsync();
+
         }
 
 

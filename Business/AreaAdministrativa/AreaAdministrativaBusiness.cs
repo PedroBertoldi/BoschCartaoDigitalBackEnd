@@ -430,18 +430,28 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
 
         /// <summary>
-        /// Faz uma busca nos direitos e retorna os direitos disponíveis para o usuário.
+        /// Busca todos os direitos de um colaborador e os direitos de outros colaboradores que o indicaram para retirada.
         /// </summary>
-        public async Task<List<Direito>> BuscarDireitosPorIdColaboradorAsync(int eventoId, int colaboradorId)
+        /// <param name="request">Parametros necessários</param>
+        /// <returns></returns>
+        public async Task<DireitosPorColaboradorAgrupadosADM> BuscarDireitosPorIdColaboradorAsync(DireitosColaboradorRequest request)
         {
+            DireitosPorColaboradorAgrupadosADM resposta = default;
             try{
-                var testarColaboradorID = await BuscarColaboradorPorIdAsync(colaboradorId);
-                var testarEventoID = await BuscarEventoIdAsync(eventoId);
+                var colab = await BuscarColaboradorPorIdAsync((int)request.idColaborador);
+                var evento = await BuscarEventoIdAsync((int)request.EventoID);
+                var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync((int)request.EventoID, (int)request.idColaborador);
+                resposta = new DireitosPorColaboradorAgrupadosADM
+                {
+                    Colaborador=colab,
+                    Evento = evento,
+                    Direitos =direitos,
+                };
             }
             catch(OperacaoInvalidaException){
                 return null;
             }
-            return await _repository.BuscarDireitosPorIdColaboradorAsync(eventoId, colaboradorId);
+            return resposta;
      
 
 

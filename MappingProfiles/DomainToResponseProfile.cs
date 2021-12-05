@@ -1,6 +1,7 @@
 using AutoMapper;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaPublica.Response;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Response;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext.Response;
@@ -25,6 +26,10 @@ namespace BoschCartaoDigitalBackEnd.MappingProfiles
             CreateMap<DireitosAgrupadosAoColaborador, DireitosAgrupadosAoColaboradorResponse>();
             CreateMap<Colaborador, ColaboradorResponseResumida>();
             CreateMap<Direito, DireitoResponseResumido>();
+
+            CreateMap<DireitosPorColaboradorAgrupadosADM, DireitosPorColaboradorAgrupadosResponseADM>();
+            CreateMap<Direito, DireitoInfoReduzidaResponseADM>();
+
         }
     }
 }
