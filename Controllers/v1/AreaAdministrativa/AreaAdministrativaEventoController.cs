@@ -349,5 +349,16 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
             return (erros == null) ? Ok(_mapper.Map<List<UnidadeOrganizacionalResponse>>(resposta)) : BadRequest(erros);
         }
+
+        [HttpPost("Beneficiarios")]
+        [ProducesResponseType(typeof(BeneficiarioResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CadastrarBeneficiario([FromBody] CriarEditarBeneficiarioRequest request)
+        {
+            var beneficiario = await _business.CadastrarBeneficiarioAsync(request);
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? Ok(_mapper.Map<BeneficiarioResponse>(beneficiario)) : BadRequest(erros);
+        }
     }
 }

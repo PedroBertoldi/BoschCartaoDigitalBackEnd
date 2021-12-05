@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Response;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
@@ -149,6 +150,79 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             return temp;
         }
 
+        public async Task<BeneficiarioResponse> CadastrarBeneficiarioAsync(CriarEditarBeneficiarioRequest request)
+        {
+            try
+            {
+                await ValidarUnidadeOrganizacionalIdAsync((int)request.UnidadeOrganizacionalId);
+            }
+            catch (OperacaoInvalidaException)
+            {
+                return null;
+            }
+
+            Colaborador colaborador = new Colaborador{
+                Cpf = request.Cpf,
+                NomeCompleto = request.NomeCompleto,
+                DataNascimento = request.DataNascimento,
+                UnidadeOrganizacionalId = request.UnidadeOrganizacionalId,
+                Edv = request.EDV,
+            };
+            List<CriarEditarBeneficiarioDireitoResponseResumido> beneficiosResponse = new List<CriarEditarBeneficiarioDireitoResponseResumido>();
+            
+            //VERIFICAR COM O GRUPO SE VAI SER NECESSARIO FAZER UMA VALIDAÇÃO ANTES DE TENTAR INSERIR UM NOVO COLABORADOR
+            await _repository.CadastrarNovoColaborador(colaborador);
+
+            if(request.beneficios.Count > 0){
+                foreach (CriarEditarBeneficiarioDireitoRequestResumido beneficio in request.beneficios)
+                {
+                    try
+                    {
+                        await ValidarEventoIdAsync((int)beneficio.EventoId);
+                        await ValidarBeneficioIdAsync((int)beneficio.BeneficioId);
+                    }
+                    catch (OperacaoInvalidaException)
+                    {
+                        return null;
+                    }
+
+                    if(beneficio.QtdBeneficio > 0){
+                        for (int i = 0; i < beneficio.QtdBeneficio; i++)
+                        {
+                            Direito direito = new Direito
+                            {
+                                ColaboradorId = colaborador.Id,
+                                EventoId = (int)beneficio.EventoId,
+                                BeneficioId = (int)beneficio.BeneficioId,
+                            };
+
+                            //fazer tratamento para se não conseguir criar um direito
+                            await _repository.CadastrarDireito(direito);
+                        }
+                    }
+
+                    beneficiosResponse.Add(new CriarEditarBeneficiarioDireitoResponseResumido{
+                        EventoId = (int)beneficio.EventoId,
+                        BeneficioId = (int)beneficio.BeneficioId,
+                        QtdBeneficio = (int)beneficio.QtdBeneficio
+                    });
+                }
+            }
+
+            var temp = new BeneficiarioResponse
+            {
+                Id = colaborador.Id,
+                Cpf = colaborador.Cpf,
+                NomeCompleto = colaborador.NomeCompleto,
+                DataNascimento = colaborador.DataNascimento,
+                UnidadeOrganizacionalId = colaborador.UnidadeOrganizacionalId,
+                Edv = colaborador.Edv,
+                beneficios = beneficiosResponse,
+            };
+
+            return temp;
+        }
+
         public async Task<BeneficioEvento> CriarRelacaoBeneficioEventoAsync(RelacaoBeneficioEventoRequest request)
         {
             var testeBeneficio = await _repository.BuscarBeneficioPorIdAsync((int)request.BeneficioId);
@@ -243,6 +317,45 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 {
                     FieldName = nameof(eventoId),
                     Message = $"Existe um Direito com o este eventoId: {eventoId}.",
+                });
+                throw new OperacaoInvalidaException();
+            }
+        }
+
+        private async Task ValidarUnidadeOrganizacionalIdAsync(int id)
+        {
+            UnidadeOrganizacional unidadeOrganizacional = await _repository.BuscarUnidadeOrganizacionalIdAsync(id);
+            if(unidadeOrganizacional == null){
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(id),
+                    Message = $"Não existe nenhuma Unidade Organizacional com o este Id: {id}.",
+                });
+                throw new OperacaoInvalidaException();
+            }
+        }
+
+        private async Task ValidarEventoIdAsync(int id)
+        {
+            Evento evento = await _repository.BuscarEventoPorIdAsync(id);
+            if(evento == null){
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(id),
+                    Message = $"Não existe nenhum Evento com o este Id: {id}.",
+                });
+                throw new OperacaoInvalidaException();
+            }
+        }
+
+        private async Task ValidarBeneficioIdAsync(int id)
+        {
+            Beneficio beneficio = await _repository.BuscarBeneficioPorIdAsync(id);
+            if(beneficio == null){
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(id),
+                    Message = $"Não existe nenhum Beneficio com o este Id: {id}.",
                 });
                 throw new OperacaoInvalidaException();
             }

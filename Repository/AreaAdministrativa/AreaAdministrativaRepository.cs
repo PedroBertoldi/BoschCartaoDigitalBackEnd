@@ -156,5 +156,23 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
 
 
 
+        public async Task<Colaborador> CadastrarNovoColaborador(Colaborador colaborador)
+        {
+            await _db.Colaborador.AddAsync(colaborador);
+            await _db.SaveChangesAsync();
+            return colaborador;
+        }
+
+        public async Task<Direito> CadastrarDireito(Direito direito)
+        {
+            await _db.Direito.AddAsync(direito);
+            await _db.SaveChangesAsync();
+            return direito;
+        }
+
+        public async Task<UnidadeOrganizacional> BuscarUnidadeOrganizacionalIdAsync(int id)
+        {
+            return await _db.UnidadeOrganizacional.Where(e => e.Id == id).FirstOrDefaultAsync();
+        }
     }
 }

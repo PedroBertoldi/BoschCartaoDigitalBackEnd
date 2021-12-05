@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext.Response;
 
 namespace BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request
 {
-    public class DireitoRequestResumido
+    public class CriarEditarBeneficiarioDireitoRequestResumido
     {
         /// <summary>
         /// Id do evento.
@@ -17,7 +14,7 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Request
         /// Id do beneficio.
         /// </summary>
         [Required]
-        public int? BeneficioID { get; set; }
+        public int? BeneficioId { get; set; }
 
         /// <summary>
         /// Quantidade deste beneficio.
