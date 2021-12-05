@@ -46,6 +46,10 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.Direito.Where(e => e.EventoId == eventoId).ToListAsync();
         }
+        public async Task<List<Direito>> BuscarDireitoIdColaboradorIdEventoAsync(int colaboradorId, int eventoId)
+        {
+            return await _db.Direito.Where( e => e.ColaboradorId == colaboradorId && e.EventoId == eventoId ).ToListAsync();
+        }
         public async Task<List<Direito>> BuscarDireitoIdColaboradorIdEventoIdBeneficioAsync(int colaboradorId, int eventoId, int beneficioId)
         {
             return await _db.Direito.Where( e => e.ColaboradorId == colaboradorId && e.EventoId == eventoId && e.BeneficioId == beneficioId ).ToListAsync();

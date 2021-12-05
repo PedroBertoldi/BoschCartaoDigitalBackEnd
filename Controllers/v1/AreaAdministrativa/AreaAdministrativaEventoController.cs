@@ -373,5 +373,25 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
 
             return (erros == null) ? Ok(_mapper.Map<BeneficiarioResponse>(beneficiario)) : BadRequest(erros);
         }
+
+        /// <summary>
+        /// Exclui todos os direitos que tenham o mesmo colaboradorId e eventoId passados.
+        /// </summary>
+        /// <param name="colaboradorId">colaboradorId do Direito a ser excluido</param>
+        /// <param name="eventoId">eventoId do Direito a ser excluido</param>
+        [HttpDelete("Direito/ColaboradorEvento/{colaboradorId}/{eventoId}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ExcluirDireitoIdColaboradorIdEvento([FromRoute] int? colaboradorId, [FromRoute] int? eventoId)
+        {
+            if (colaboradorId == null) return BadRequest(new ErrorResponse("O ID do colaborador é obrigatório", nameof(colaboradorId)));
+            if (eventoId == null) return BadRequest(new ErrorResponse("O ID do evento é obrigatório", nameof(eventoId)));
+
+            await _business.ExcluirDireitoIdColaboradorIdEventoAsync((int)colaboradorId, (int)eventoId);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
     }
 }

@@ -558,6 +558,26 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
         }
 
+        public async Task ExcluirDireitoIdColaboradorIdEventoAsync(int colaboradorId, int eventoId)
+        {
+            List<Direito> direitos = await _repository.BuscarDireitoIdColaboradorIdEventoAsync(colaboradorId, eventoId);
+            if(direitos.Count > 0)
+            {
+                foreach (Direito direito in direitos)
+                {
+                    await _repository.ExcluirDireitoAsync(direito);
+                }
+            }
+            else
+            {
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(direitos),
+                    Message = $"Não existe nenhum Direito que tenha o colaboradorId: {colaboradorId}, e o eventoId: {eventoId}."
+                });
+            }
+        }
+
         public async Task ExcluirBeneficioAsync(int id)
         {
             try
