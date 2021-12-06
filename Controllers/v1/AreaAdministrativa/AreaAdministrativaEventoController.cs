@@ -401,5 +401,22 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
 
             return (erros == null) ? NoContent() : BadRequest(erros);
         }
+
+        /// <summary>
+        /// Busca todos os direitos relacionados a um colaborador pelo seu EDV
+        /// </summary>
+        /// <param name="eventoID">Id do evento</param>
+        /// <param name="colaboradorEDV">EDV do colaborador</param>
+        [AllowAnonymous]
+        [HttpGet("Direito/Buscar/{eventoID}/{colaboradorEDV}")]
+        [ProducesResponseType(typeof(DireitosPorColaboradorAgrupadosResponseADM), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> BuscarDireitos([FromRoute] int? eventoID, [FromRoute] string? colaboradorEDV)
+        {
+            var resposta = await _business.BuscarDireitosPorEDVColaboradorAsync((int)eventoID, colaboradorEDV);
+            
+            var erros = _business.BuscarErros();
+            return (erros == null) ? Ok(_mapper.Map<DireitosPorColaboradorAgrupadosResponseADM>(resposta)) : BadRequest(erros);
+        }
     }
 }
