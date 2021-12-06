@@ -703,10 +703,15 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 {
                     Colaborador=colab,
                     Evento = evento,
-                    Direitos =direitos,
                     Indicado = indicado,
 
                 };
+                if(direitos==null){
+                    resposta.Direitos=new List<Direito>();
+                }
+                else{
+                    resposta.Direitos=direitos;
+                }
             }
             catch(OperacaoInvalidaException){
                 return null;
