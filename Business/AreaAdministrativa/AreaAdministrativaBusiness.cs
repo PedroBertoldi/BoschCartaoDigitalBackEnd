@@ -676,11 +676,6 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             return beneficioEvento;
         }
 
-               /// <summary>
-        /// Busca um colaborador por seu ID.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         private async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
         {
             var colaborador = await _repository.BuscarColaboradorPorIdAsync(id);
@@ -696,13 +691,6 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             return colaborador;
         }
 
-
-
-        /// <summary>
-        /// Busca todos os direitos de um colaborador e os direitos de outros colaboradores que o indicaram para retirada.
-        /// </summary>
-        /// <param name="request">Parametros necessários</param>
-        /// <returns></returns>
         public async Task<DireitosPorColaboradorAgrupadosADM> BuscarDireitosPorIdColaboradorAsync(DireitosColaboradorRequest request)
         {
             DireitosPorColaboradorAgrupadosADM resposta = default;
@@ -724,9 +712,6 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 return null;
             }
             return resposta;
-     
-
-
         }
 
         public async Task<DireitosTodosColaboradoresAgrupados> BuscarTodosDireitosPorColaborador(int idEvento)
@@ -762,10 +747,52 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             return resposta;
     }
 
-
         public async Task<List<UnidadeOrganizacional>> listarUnidadeOrganizacionalAsync()
         {
             return await _repository.listarUnidadeOrganizacional();
+        }
+
+
+        private async Task<Colaborador> BuscarColaboradorPorEDVsync(string edv)
+        {
+            var colaborador = await _repository.BuscarColaboradorPorEDV(edv);
+            if (colaborador == null)
+            {
+                _errors.Add(new ErrorModel
+                {
+                    FieldName = nameof(edv),
+                    Message = $"Não foi encontrado um colaborador com o EDV: {edv}",
+                });
+                throw new OperacaoInvalidaException();
+            }
+            return colaborador;
+        }
+        public async Task<DireitosPorColaboradorAgrupadosADM> BuscarDireitosPorEDVColaboradorAsync(int idEvento, string edv)
+        {
+            DireitosPorColaboradorAgrupadosADM resposta = default;
+            try{
+                var colab = await BuscarColaboradorPorEDVsync(edv);
+                var evento = await BuscarEventoIdAsync(idEvento);
+                var indicado = await _repository.BuscarIndicado(idEvento, colab.Id);
+                var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync(idEvento, colab.Id);
+                resposta = new DireitosPorColaboradorAgrupadosADM
+                {
+                    Colaborador=colab,
+                    Evento = evento,
+                    Indicado = indicado,
+
+                };
+                if(direitos==null){
+                    resposta.Direitos=new List<Direito>();
+                }
+                else{
+                    resposta.Direitos=direitos;
+                }
+            }
+            catch(OperacaoInvalidaException){
+                return null;
+            }
+            return resposta;
         }
     }
 }
