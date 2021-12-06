@@ -131,7 +131,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
             return (erros == null) ? Ok(_mapper.Map<List<ListarBeneficiosEventoResponse>>(resposta)) : BadRequest(erros);
         }
-
+        //TODO: Remover
         /// <summary>
         /// Cadastra um tipo de beneficio no banco de dados.
         /// </summary>
@@ -149,6 +149,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
                 BadRequest(erros); 
         }
 
+        //TODO: Remover
         /// <summary>
         /// Cria uma relação entre um beneficio e um evento.
         /// </summary>
@@ -202,6 +203,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros == null) ? NoContent() : BadRequest(erros);
         }
 
+        //TODO: Remover
         /// <summary>
         /// Exclui BeneficioEvento pelo beneficioId.
         /// </summary>
@@ -221,6 +223,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros == null) ? NoContent() : BadRequest(erros);
         }
 
+        //TODO: Remover
         /// <summary>
         /// Exclui BeneficioEvento pelo eventoId.
         /// </summary>
@@ -240,6 +243,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros == null) ? NoContent() : BadRequest(erros);
         }
 
+        //TODO: Remover
         /// <summary>
         /// Exclui Direito pelo beneficioId.
         /// </summary>
@@ -259,6 +263,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros == null) ? NoContent() : BadRequest(erros);
         }
 
+        //TODO: Remover
         /// <summary>
         /// Exclui Direito pelo eventoId.
         /// </summary>
@@ -278,6 +283,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros == null) ? NoContent() : BadRequest(erros);
         }
 
+        //TODO: Remover
         /// <summary>
         /// Retorna todos os beneficios cadastrados independente de evento
         /// </summary>
@@ -406,6 +412,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros == null) ? Ok(_mapper.Map<BeneficiarioResponse>(beneficiario)) : BadRequest(erros);
         }
 
+        //TODO: Remover
         /// <summary>
         /// Exclui todos os direitos que tenham o mesmo colaboradorId e eventoId passados.
         /// </summary>
