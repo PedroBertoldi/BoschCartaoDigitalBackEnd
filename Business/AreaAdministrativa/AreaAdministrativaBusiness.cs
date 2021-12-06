@@ -86,7 +86,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         private void ValidarDataEvento(DateTime inicio, DateTime fim)
         {
-            if (fim.Date <= inicio.Date)
+            if (fim <= inicio)
             {
                 _errors.Add(new ErrorModel
                 {
