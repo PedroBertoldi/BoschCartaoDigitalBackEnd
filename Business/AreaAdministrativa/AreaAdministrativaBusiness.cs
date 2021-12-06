@@ -49,7 +49,16 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         public async Task<List<Beneficio>> ListaBeneficiosPorEventoAsync(int id)
         {
-            List<Beneficio> lista = await _repository.ListaBeneficioIdEventoAsync((int)id);
+            List<Beneficio> lista = default;
+            if (id == 0)
+            {
+                lista = await _repository.ListaBeneficioEventoAtivoAsync();
+                if (lista == null)
+                    lista = await _repository.ListaBeneficioProximoEventoAsync();
+            }else{
+                lista = await _repository.ListaBeneficioIdEventoAsync((int)id);
+            }
+            
             if (lista == null)
             {
                 _errors.Add(new ErrorModel

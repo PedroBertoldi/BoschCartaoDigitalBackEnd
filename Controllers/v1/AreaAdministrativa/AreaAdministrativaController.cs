@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
 {
+    [Authorize(Roles = "HRL")]
     [ApiController]
     [Route("api/AreaAdministrativa")]
     [Produces("application/json")]
@@ -111,7 +112,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// <summary>
         /// Lista os beneficios de um evento.
         /// </summary>
-        /// <param name="id">Parametros necessários para a consulta</param>
+        /// <param name="id">Id do evento a ser consultado, ou 0 para o proximo evento</param>
         // [AllowAnonymous]
         [HttpGet("Evento/{id}/listar-beneficios")]
         [ProducesResponseType(typeof(List<ListarBeneficiosEventoResponse>), StatusCodes.Status200OK)]
@@ -411,7 +412,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         [HttpGet("Direito/Buscar/{eventoID}/{colaboradorEDV}")]
         [ProducesResponseType(typeof(DireitosPorColaboradorAgrupadosResponseADM), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> BuscarDireitos([FromRoute] int? eventoID, [FromRoute] string? colaboradorEDV)
+        public async Task<IActionResult> BuscarDireitos([FromRoute] int? eventoID, [FromRoute] string colaboradorEDV)
         {
             var resposta = await _business.BuscarDireitosPorEDVColaboradorAsync((int)eventoID, colaboradorEDV);
             

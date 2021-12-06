@@ -20,8 +20,8 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         }
         public async Task<List<Evento>> BuscarTodosEventosAsync(PaginacaoRequest paginacao)
         {
-            return (paginacao.Tamanho == 0) ? await _db.Evento.ToListAsync() : 
-            await _db.Evento.Skip(paginacao.Tamanho * (paginacao.Pagina -1)).Take(paginacao.Tamanho).ToListAsync();
+            return (paginacao.Tamanho == 0) ? await _db.Evento.ToListAsync() :
+            await _db.Evento.Skip(paginacao.Tamanho * (paginacao.Pagina - 1)).Take(paginacao.Tamanho).ToListAsync();
         }
         public async Task<Evento> BuscarEventoPorIdAsync(int id)
         {
@@ -30,10 +30,27 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         public async Task<List<Beneficio>> ListaBeneficioIdEventoAsync(int eventoId)
         {
             Evento con = await _db.Evento.Where(e => e.Id == eventoId)
-                .Include( d => d.BeneficioEvento )
-                .ThenInclude( d => d.Beneficio )
+                .Include(d => d.BeneficioEvento)
+                .ThenInclude(d => d.Beneficio)
                 .AsSplitQuery().FirstOrDefaultAsync();
-            return ((con==null) ? null : con.BeneficioEvento.Select(c => c.Beneficio ).ToList());
+            return ((con == null) ? null : con.BeneficioEvento.Select(c => c.Beneficio).ToList());
+        }
+        public async Task<List<Beneficio>> ListaBeneficioEventoAtivoAsync()
+        {
+            Evento con = await _db.Evento.Where(e => e.DataInicio.Value.Date <= DateTime.Today && e.DataFim.Value.Date >= DateTime.Today)
+                .Include(d => d.BeneficioEvento)
+                .ThenInclude(d => d.Beneficio)
+                .AsSplitQuery().FirstOrDefaultAsync();
+            return ((con == null) ? null : con.BeneficioEvento.Select(c => c.Beneficio).ToList());
+        }
+        public async Task<List<Beneficio>> ListaBeneficioProximoEventoAsync()
+        {
+            Evento con = await _db.Evento.Where(e => e.DataInicio.Value.Date >= DateTime.Today)
+                .OrderBy(e => e.DataInicio.Value.Date)
+                .Include(d => d.BeneficioEvento)
+                .ThenInclude(d => d.Beneficio)
+                .AsSplitQuery().FirstOrDefaultAsync();
+            return ((con == null) ? null : con.BeneficioEvento.Select(c => c.Beneficio).ToList());
         }
         public async Task<List<BeneficioEvento>> BuscarBeneficioEventoIdBeneficioAsync(int beneficioId)
         {
@@ -49,11 +66,11 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         }
         public async Task<List<Direito>> BuscarDireitoIdColaboradorIdEventoAsync(int colaboradorId, int eventoId)
         {
-            return await _db.Direito.Where( e => e.ColaboradorId == colaboradorId && e.EventoId == eventoId ).ToListAsync();
+            return await _db.Direito.Where(e => e.ColaboradorId == colaboradorId && e.EventoId == eventoId).ToListAsync();
         }
         public async Task<List<Direito>> BuscarDireitoIdColaboradorIdEventoIdBeneficioAsync(int colaboradorId, int eventoId, int beneficioId)
         {
-            return await _db.Direito.Where( e => e.ColaboradorId == colaboradorId && e.EventoId == eventoId && e.BeneficioId == beneficioId ).ToListAsync();
+            return await _db.Direito.Where(e => e.ColaboradorId == colaboradorId && e.EventoId == eventoId && e.BeneficioId == beneficioId).ToListAsync();
         }
         public async Task<List<BeneficioEvento>> BuscarBeneficioEventoIdEventoAsync(int eventoId)
         {
@@ -126,16 +143,13 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.Beneficio.ToListAsync();
         }
-
-
-
         public async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
         {
             return await _db.Colaborador.FindAsync(id);
         }
         public async Task<Colaborador> BuscarColaboradorCpfEdvDataNascimentoAsync(string Cpf, string Edv, DateTime DataNascimento)
         {
-            return await _db.Colaborador.Where( e => e.Cpf == Cpf && e.Edv == Edv && e.DataNascimento == DataNascimento ).FirstOrDefaultAsync();
+            return await _db.Colaborador.Where(e => e.Cpf == Cpf && e.Edv == Edv && e.DataNascimento == DataNascimento).FirstOrDefaultAsync();
         }
 
         public async Task<List<Direito>> BuscarDireitosPorIdColaboradorAsync(int eventoId, int colaboradorId)
@@ -151,13 +165,13 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         public async Task<List<Colaborador>> BuscarTodosColaboradoresBosch()
         {
             //Retorna apenas os colaboradores que trabalham na Bosch
-            return await _db.Colaborador.Where(d => d.Edv!=null).ToListAsync();
+            return await _db.Colaborador.Where(d => d.Edv != null).ToListAsync();
         }
 
         public async Task<Colaborador> BuscarIndicado(int idEvento, int idColaborador)
         { //Assume que um colaborador ou sempre terá o mesmo indicado para seus benefícios, ou não terá nenhum
-            var d = await _db.Direito.Where(d => d.EventoId == idEvento && d.ColaboradorId == idColaborador && d.Indicado!=null).FirstOrDefaultAsync();
-            if(d==null){return null;}
+            var d = await _db.Direito.Where(d => d.EventoId == idEvento && d.ColaboradorId == idColaborador && d.Indicado != null).FirstOrDefaultAsync();
+            if (d == null) { return null; }
             return d.Indicado;
 
         }
@@ -166,9 +180,6 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.UnidadeOrganizacional.ToListAsync();
         }
-
-
-
         public async Task<Colaborador> CadastrarNovoColaborador(Colaborador colaborador)
         {
             await _db.Colaborador.AddAsync(colaborador);
@@ -198,7 +209,7 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         public async Task<Colaborador> BuscarColaboradorPorEDV(string edv)
         {
             return await _db.Colaborador.Where(c => c.Edv == edv).FirstOrDefaultAsync();
-        }        
+        }
         public async Task<List<Direito>> BuscarDireitosPorEDVColaboradorAsync(int eventoId, string edv)
         {
             return await _db.Direito.Where(d => d.EventoId == eventoId && d.Colaborador.Edv == edv)
