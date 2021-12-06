@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
 {
-    [Authorize(Roles = "HRL")]
+    [Authorize]
     [ApiController]
     [Route("api/AreaAdministrativa")]
     [Produces("application/json")]
@@ -36,6 +36,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="paginacao">parametros para paginação</param>
         [HttpGet("Evento")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(List<EventoResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> BuscarTodosEventos([FromQuery] PaginacaoRequest paginacao)
         {
@@ -48,6 +49,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="id">Id do evento</param>
         [HttpGet("Evento/{id}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(EventoResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> BuscarTodosEventos([FromRoute] int? id)
         {
@@ -62,6 +64,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="request">Parametros necessário para criação de evento</param>
         [HttpPost("Evento")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(EventoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AdicionarEvento([FromBody] CriarEditarEventoRequest request)
@@ -79,6 +82,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// <param name="id">id do evento a ser modificado</param>
         /// <param name="request">Parametros necessários para a modificação</param>
         [HttpPut("Evento/{id}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(EventoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> EditarEvento([FromRoute] int? id, [FromBody] CriarEditarEventoRequest request)
@@ -96,6 +100,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="id">beneficioId do Direito a ser excluido</param>
         [HttpDelete("Evento/{id}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirEventoId([FromRoute] int? id)
@@ -115,6 +120,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// <param name="id">Id do evento a ser consultado, ou 0 para o proximo evento</param>
         // [AllowAnonymous]
         [HttpGet("Evento/{id}/listar-beneficios")]
+        [Authorize(Roles = "HRL,Entrega")]
         [ProducesResponseType(typeof(List<ListarBeneficiosEventoResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ListarBeneficiosEvento([FromRoute] int? id)
@@ -131,6 +137,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="request">Parametros necessários</param>
         [HttpPost("Beneficio")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(BeneficioResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CadastrarBeneficio([FromBody] CriarEditarBeneficioRequest request)
@@ -147,6 +154,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="request">Parametros necessarios para criar a relação</param>
         [HttpPost("Beneficio/criar-relacao")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(BeneficioEventoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CriarRelacaoBeneficioEvento([FromBody] RelacaoBeneficioEventoRequest request)
@@ -162,6 +170,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// <param name="id">id do beneficio a ser modificado</param>
         /// <param name="request">Parametros necessários para a modificação</param>
         [HttpPut("Beneficio/{id}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(BeneficioResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> EditarBeneficio([FromRoute] int? id, [FromBody] CriarEditarBeneficioRequest request)
@@ -179,6 +188,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="id">id do beneficio a ser excluido</param>
         [HttpDelete("Beneficio/{id}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirBeneficio([FromRoute] int? id)
@@ -197,6 +207,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="beneficioId">beneficioId do BeneficioEvento a ser excluido</param>
         [HttpDelete("BeneficioEvento/Beneficio/{beneficioId}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirBeneficioEventoIdBeneficio([FromRoute] int? beneficioId)
@@ -215,6 +226,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="eventoId">eventoId do BeneficioEvento a ser excluido</param>
         [HttpDelete("BeneficioEvento/Evento/{eventoId}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirBeneficioEventoIdEvento([FromRoute] int? eventoId)
@@ -233,6 +245,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="beneficioId">beneficioId do Direito a ser excluido</param>
         [HttpDelete("Direito/Beneficio/{beneficioId}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirDireitoIdBeneficio([FromRoute] int? beneficioId)
@@ -251,6 +264,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="eventoId">eventoId do Direito a ser excluido</param>
         [HttpDelete("Direito/Evento/{eventoId}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirDireitoIdEvento([FromRoute] int? eventoId)
@@ -268,6 +282,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// Retorna todos os beneficios cadastrados independente de evento
         /// </summary>
         [HttpGet("Beneficio")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(List<BeneficioResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> BuscarTodosBeneficios()
         {
@@ -281,6 +296,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="id">Id do beneficio</param>
         [HttpGet("Beneficio/{id}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(BeneficioResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BuscarBeneficioPorID([FromRoute] int? id)
@@ -294,6 +310,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         }
 
         [HttpPost("Evento/criar-beneficio-no-evento")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(BeneficioEventoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CriarBeneficioEAtrelar([FromBody] CriarEAtrelarBeneficioRequest request)
@@ -310,6 +327,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// <param name="request">Parametros necessários para a busca</param>
         [AllowAnonymous]
         [HttpGet("buscar-direitos")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(DireitosPorColaboradorAgrupadosResponseADM), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BuscarDireitos([FromQuery] DireitosColaboradorRequest request)
@@ -325,6 +343,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="id">Id do evento</param>
         [HttpGet("TodosDireitos/{id}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(DireitosTodosColaboradoresAgrupadosResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BuscarDireitosTodosColaboradores([FromRoute] int? id)
@@ -342,6 +361,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         [AllowAnonymous]
         [HttpGet("listar-unidade-organizacional")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(List<UnidadeOrganizacionalResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ListarUnidadeOrganizacional()
@@ -356,6 +376,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="request">Parametros necessarios para a ação ser realizada</param>
         [HttpPost("Beneficiarios")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(BeneficiarioResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CadastrarBeneficiario([FromBody] CriarEditarBeneficiarioRequest request)
@@ -372,6 +393,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// <param name="id">id do Colaborador a ser atualizado</param>
         /// <param name="request">Parametros necessarios para a ação ser realizada</param>
         [HttpPut("Beneficiarios/{id}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(BeneficiarioResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> EditarBeneficiario([FromRoute] int? id, [FromBody] CriarEditarBeneficiarioRequest request)
@@ -390,6 +412,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// <param name="colaboradorId">colaboradorId do Direito a ser excluido</param>
         /// <param name="eventoId">eventoId do Direito a ser excluido</param>
         [HttpDelete("Direito/ColaboradorEvento/{colaboradorId}/{eventoId}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ExcluirDireitoIdColaboradorIdEvento([FromRoute] int? colaboradorId, [FromRoute] int? eventoId)
@@ -408,8 +431,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         /// </summary>
         /// <param name="eventoID">Id do evento</param>
         /// <param name="colaboradorEDV">EDV do colaborador</param>
-        [AllowAnonymous]
         [HttpGet("Direito/Buscar/{eventoID}/{colaboradorEDV}")]
+        [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(DireitosPorColaboradorAgrupadosResponseADM), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BuscarDireitos([FromRoute] int? eventoID, [FromRoute] string colaboradorEDV)

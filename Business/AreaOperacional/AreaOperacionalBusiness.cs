@@ -19,7 +19,10 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaOperacional
         {
             _repository = repository;
         }
-
+        /// <summary>
+        /// Função interna auxiliar para buscar um evento por ID ou o proximo evento que ira ocorrer.
+        /// </summary>
+        /// <param name="id">Id do evento, null para o proximo evento</param>
         private async Task<Evento> BuscarProximoEventoOuEvetoPorIdAsync(int? id)
         {
             var evento = (id == null) ? await _repository.BuscarProximoEventoAsync() : await _repository.BuscarEventoPorIdAsync((int)id);
@@ -34,7 +37,11 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaOperacional
             }
             return evento;
         }
-
+        /// <summary>
+        /// Busca beneficios de um colaborador pelo CPF ou EDV, sem a necessidade da data de nascimento
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task<DireitosAgrupadosAoColaborador> BuscarBeneficiosPorCPFOuEDV(BuscarDireitosRequest request)
         {
             DireitosAgrupadosAoColaborador resposta = default;
@@ -78,7 +85,11 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaOperacional
 
             return resposta;
         }
-
+        /// <summary>
+        /// Define um grupo de direitos como recebidos
+        /// </summary>
+        /// <param name="request">Parametros necessarios</param>
+        /// <returns></returns>
         public async Task<List<Direito>> CadastrarRecebimentoAsync(DireitoEntregueRequest request)
         {
             List<Direito> retorno = default;
