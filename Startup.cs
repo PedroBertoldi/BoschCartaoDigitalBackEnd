@@ -26,17 +26,20 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using BoschCartaoDigitalBackEnd.Repository.AreaOperacional;
 using BoschCartaoDigitalBackEnd.Business.AreaOperacional;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace BoschCartaoDigitalBackEnd
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            webEnv = env;
         }
 
         public IConfiguration Configuration { get; }
+        private IWebHostEnvironment webEnv { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -47,11 +50,12 @@ namespace BoschCartaoDigitalBackEnd
               {
                   options.AddPolicy(
                     "CorsPolicy",
-                    builder => builder.WithOrigins(
-                        "http://localhost:4200",
-                        "https://boschcartao.z13.web.core.windows.net/"
-                    ).AllowAnyMethod()
-                    .AllowAnyHeader());
+                    builder =>
+                    {
+                        CorsPolicyBuilder policy = (webEnv.IsDevelopment()) ? builder.AllowAnyOrigin() :
+                            builder.WithOrigins("https://boschcartao.z13.web.core.windows.net/");
+                        policy.AllowAnyMethod().AllowAnyHeader();
+                    });
               });
 
 
