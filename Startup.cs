@@ -47,9 +47,10 @@ namespace BoschCartaoDigitalBackEnd
               {
                   options.AddPolicy(
                     "CorsPolicy",
-                    builder => builder.WithOrigins("http://localhost:4200")
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
+                    builder => builder.WithOrigins(
+                        "http://localhost:4200",
+                        "https://boschcartao.z13.web.core.windows.net/"
+                    ).AllowAnyMethod()
                     .AllowAnyHeader());
               });
 
@@ -154,17 +155,15 @@ namespace BoschCartaoDigitalBackEnd
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "BoschCartaoDigitalBackEnd v1");
-                    c.RoutePrefix = "";
-                });
             }
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "BoschCartaoDigitalBackEnd v1");
+                c.RoutePrefix = "";
+            });
 
             app.UseCors("CorsPolicy");
-
-
 
             app.UseHttpsRedirection();
 
