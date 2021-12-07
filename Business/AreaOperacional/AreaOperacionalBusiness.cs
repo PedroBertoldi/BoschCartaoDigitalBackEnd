@@ -141,7 +141,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaOperacional
             try{
                 var evento = await BuscarProximoEventoOuEvetoPorIdAsync(idEvento);
                 var beneficiosNoEvento = await _repository.BuscarTodosBeneficiosEmEvento(idEvento);
-                if(beneficiosNoEvento==null)                    
+                if(beneficiosNoEvento==null || beneficiosNoEvento.Count==0)                    
                 {
                         _errors.Add(new ErrorModel
                         {
@@ -151,12 +151,12 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaOperacional
                         return null;
                 }
                 var colaboradores= await _repository.BuscarTodosColaboradoresBosch();
-                if(beneficiosNoEvento==null)                    
+                if(colaboradores==null || colaboradores.Count==0)                    
                 {
                         _errors.Add(new ErrorModel
                         {
                             FieldName = nameof(colaboradores),
-                            Message = $"Não há colaboradores cadastrados: {colaboradores}"
+                            Message = $"Não há colaboradores cadastrados no sistema: {colaboradores}"
                         });
                         return null;
                 }

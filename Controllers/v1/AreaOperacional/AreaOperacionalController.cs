@@ -64,11 +64,11 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaOperacional
         }
 
         /// <summary>
-        /// Define uma lista de direitos como recebidos.
+        /// Lista benefícios e colaboradores por benefício
         /// </summary>
         /// <param name="idEvento">Parametros necessários</param>
         /// <returns></returns>
-        [HttpGet("Direitos/listar")]
+        [HttpGet("Direitos/listarColaboradoresPorBeneficio")]
         [ProducesResponseType(typeof(List<ColaboradoresAgrupadosAoDireitoResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ListarDireitos([FromQuery] int idEvento)
