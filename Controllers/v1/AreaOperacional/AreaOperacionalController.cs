@@ -4,6 +4,7 @@ using AutoMapper;
 using BoschCartaoDigitalBackEnd.Business.AreaOperacional;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaOperacional.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.AreaOperacional.Response;
+using BoschCartaoDigitalBackEnd.Models.v1.AreaOperacional;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext.Response;
 using Microsoft.AspNetCore.Authorization;
@@ -60,6 +61,21 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaOperacional
             var direitos = await _business.CadastrarRecebimentoAsync(request);
             var erros = _business.BuscarErros();
             return (erros == null) ? Ok(_mapper.Map<List<DireitoResponse>>(direitos)) : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Define uma lista de direitos como recebidos.
+        /// </summary>
+        /// <param name="idEvento">Parametros necessários</param>
+        /// <returns></returns>
+        [HttpGet("Direitos/listar")]
+        [ProducesResponseType(typeof(List<ColaboradoresAgrupadosAoDireitoResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ListarDireitos([FromQuery] int idEvento)
+        {
+            var retorno = await _business.ListarColaboradoresPorBeneficio(idEvento);
+            var erros = _business.BuscarErros();
+            return (erros == null) ? Ok(_mapper.Map<List<ColaboradoresAgrupadosAoDireitoResponse>>(retorno)) : BadRequest(erros);
         }
     }
 }

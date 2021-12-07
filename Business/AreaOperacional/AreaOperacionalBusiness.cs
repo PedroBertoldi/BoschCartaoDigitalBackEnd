@@ -8,6 +8,7 @@ using BoschCartaoDigitalBackEnd.Models.v1.AreaOperacional.Request;
 using BoschCartaoDigitalBackEnd.Models.v1.Commom.Responses;
 using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
 using BoschCartaoDigitalBackEnd.Repository.AreaOperacional;
+using System;
 
 namespace BoschCartaoDigitalBackEnd.Business.AreaOperacional
 {
@@ -125,6 +126,62 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaOperacional
             }
             catch (OperacaoInvalidaException){}
             return retorno;
+        }
+    
+
+        /// <summary>
+        /// Define um grupo de direitos como recebidos
+        /// </summary>
+        /// <param name="idEvento">Parametros necessarios</param>
+        /// <returns></returns>
+        public async Task<List<ColaboradoresAgrupadosAoDireito>> ListarColaboradoresPorBeneficio(int idEvento)
+        {
+            List<ColaboradoresAgrupadosAoDireito> resposta = new List<ColaboradoresAgrupadosAoDireito>();
+
+            try{
+                var evento = await BuscarProximoEventoOuEvetoPorIdAsync(idEvento);
+                var beneficiosNoEvento = await _repository.BuscarTodosBeneficiosEmEvento(idEvento);
+                if(beneficiosNoEvento==null)                    
+                {
+                        _errors.Add(new ErrorModel
+                        {
+                            FieldName = nameof(idEvento),
+                            Message = $"Não há benefícios cadastrados no evento: {idEvento}"
+                        });
+                        return null;
+                }
+                var colaboradores= await _repository.BuscarTodosColaboradoresBosch();
+                if(beneficiosNoEvento==null)                    
+                {
+                        _errors.Add(new ErrorModel
+                        {
+                            FieldName = nameof(colaboradores),
+                            Message = $"Não há colaboradores cadastrados: {colaboradores}"
+                        });
+                        return null;
+                }
+                foreach(Beneficio b in beneficiosNoEvento){
+                    var pacote = new ColaboradoresAgrupadosAoDireito();
+                    pacote.beneficiarios = new List<BeneficiarioResumido>();
+                    pacote.beneficio=b;
+                    foreach(Colaborador c in colaboradores){
+                        var direitos = await _repository.BuscarBeneficiosEspecificosEmEventoPorIdColaborador(c.Id, idEvento, b.Id);
+                        if(direitos==null){continue;}
+                        foreach(Direito d in direitos){
+                            var agrupado = new BeneficiarioResumido();
+                            agrupado.idColaborador=c.Id;
+                            agrupado.nomeCompleto = c.NomeCompleto;
+                            agrupado.idDireito=d.Id;
+                            pacote.beneficiarios.Add(agrupado);
+                        }
+
+                    }
+                    resposta.Add(pacote);
+                }                
+            }
+            catch (OperacaoInvalidaException) { }
+            return resposta;
+
         }
     }
 }

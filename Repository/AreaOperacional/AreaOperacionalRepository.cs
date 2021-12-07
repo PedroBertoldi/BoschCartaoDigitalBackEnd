@@ -69,5 +69,23 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaOperacional
         {
             return await _db.Colaborador.Where(c => c.Id == id).FirstOrDefaultAsync();
         }
+
+        public async Task<List<Beneficio>> BuscarTodosBeneficiosEmEvento(int idEvento)
+        {
+            return await _db.BeneficioEvento.Where(c => c.EventoId == idEvento).Include(d => d.Beneficio).AsSplitQuery().Select(d=> d.Beneficio).ToListAsync();
+
+        }
+
+        public async Task<List<Colaborador>> BuscarTodosColaboradoresBosch()
+        {
+            //Retorna apenas os colaboradores que trabalham na Bosch
+            return await _db.Colaborador.Where(d => d.Edv != null).ToListAsync();
+        }
+
+        public async Task<List<Direito>> BuscarBeneficiosEspecificosEmEventoPorIdColaborador(int colaboradorID, int eventoId, int beneficioID)
+        {
+            return await _db.Direito.Where(d => d.EventoId == eventoId && d.ColaboradorId==colaboradorID && d.BeneficioId==beneficioID && d.Retirado==null).ToListAsync();
+        }
+
     }
 }
