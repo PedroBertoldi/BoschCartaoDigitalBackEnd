@@ -1,7 +1,6 @@
 -----------------------------------------DATATBASE VERSION 2------------------------------------------------------------
 CREATE DATABASE projetoBosch;
-GO 
-
+GO
 CREATE TABLE projetoBosch.dbo.tipoPermissao (
     id int identity(1,1),
     descricao nvarchar(255) not null,
@@ -242,7 +241,7 @@ INSERT INTO projetoBosch.dbo.colaborador(cpf, nomeCompleto, dataNascimento,unida
     INNER JOIN projetoBosch.dbo.unidadeOrganizacional U on P.unidadeOrganizacional = U.descricao
 );
 
-UPDATE projetoBosch.dbo.colaborador SET EDV=REVERSE(SUBSTRING(cpf,2,7)); --Criação dos EDVS
+UPDATE projetoBosch.dbo.colaborador SET EDV=CONVERT(varchar, id+199); --Criação dos EDVS
 UPDATE projetoBosch.dbo.colaborador SET Senha=CONCAT(SUBSTRING(nomeCompleto, 4, 1),REVERSE(SUBSTRING(cpf,5,3)), SUBSTRING(nomeCompleto, 2, 1), SUBSTRING(CONVERT(varchar, EDV),2,3)); --Criação das Senhas
 -- colaborador --
 GO
