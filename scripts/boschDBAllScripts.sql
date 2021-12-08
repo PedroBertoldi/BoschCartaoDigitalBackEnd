@@ -78,6 +78,7 @@ CREATE TABLE projetoBosch.dbo.direito(
     constraint fk_direito_indicadoID foreign key(indicadoID) references colaborador(id),
     constraint fk_direito_retiradoID foreign key(retiradoID) references colaborador(id)
 );
+
 -----------------------------------------DATATBASE VERSION 2------------------------------------------------------------
 
 -----------------------------------------IMPORTS CSV--------------------------------------------------------------------
@@ -616,4 +617,8 @@ DROP TABLE projetoBosch.dbo.CestaFria$;
 DROP TABLE projetoBosch.dbo.PresenteBosch$;
 DROP TABLE projetoBosch.dbo.MaterialEscolar$;
 DROP TABLE projetoBosch.dbo.Brinquedos$;
------------------------------------------DELETES------------------------------------------------------------------------
+-----------------------------------------ALTERAÇÃO COLABORADOR------------------------------------------------------------------------
+ALTER TABLE projetoBosch.dbo.colaborador
+ADD origemID int constraint fk_colaborador_origemID foreign key(origemID) references colaborador(id);
+ALTER TABLE projetoBosch.dbo.colaborador
+ADD DataDeCadastro datetime
