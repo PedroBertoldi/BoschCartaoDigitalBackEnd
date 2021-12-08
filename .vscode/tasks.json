@@ -42,6 +42,11 @@
             "label": "scaffold ProjetoBoschContext",
             "command": "dotnet ef dbcontext scaffold Name=ConnectionStrings:ProjetoBoschContext Microsoft.EntityFrameworkCore.SqlServer -d -c ProjetoBoschContext --context-dir Database/Context/ --output-dir Models/v1/ProjetoBoschContext/ --no-pluralize -f",
             "type": "shell",
+        },
+        {
+            "label": "build release",
+            "command": "dotnet publish -c Release -o ./publish",
+            "type": "shell",
         }
     ]
 }
