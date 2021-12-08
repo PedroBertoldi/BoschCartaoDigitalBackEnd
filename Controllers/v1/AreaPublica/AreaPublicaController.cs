@@ -95,6 +95,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaPublica
         [AllowAnonymous] //Verificar isso aqui, não sei se é a melhor coisa
         [HttpGet("buscar-indicado")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BuscarIndicado([FromQuery] BuscarIndicadoRequest request)
         {
@@ -104,6 +105,8 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaPublica
 
             var colaboradorIndicado = await _business.BuscarIndicadoAsync(request);
             var erros = _business.BuscarErros();
+            
+            if(colaboradorIndicado == null) return NotFound();
 
             return (erros == null) ? Ok(_mapper.Map<ColaboradorResponse>(colaboradorIndicado)) : BadRequest(erros);
 

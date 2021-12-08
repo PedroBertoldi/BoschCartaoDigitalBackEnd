@@ -209,8 +209,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaPublica
             {
                 var evento = await BuscarEventoAsync(request.EventoID);
                 var colaborador = await BuscarColaboradorPorIdAsync((int)request.ColaboradorId);
-                indicado = await _repository.BuscarIndicadoAsync(colaborador.Id, evento.Id);
-                if (colaborador.DataNascimento != request.DataNascimento)
+                indicado = await _repository.BuscarIndicadoAsync(evento.Id, colaborador.Id);
+                if (colaborador.DataNascimento.Value.Date != request.DataNascimento.Value.Date)
                 {
                     _errors.Add(new ErrorModel
                     {
