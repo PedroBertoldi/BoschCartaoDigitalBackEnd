@@ -208,7 +208,9 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
 
         public async Task<Colaborador> BuscarColaboradorPorEDV(string edv)
         {
-            return await _db.Colaborador.Where(c => c.Edv == edv).FirstOrDefaultAsync();
+            return await _db.Colaborador.Where(c => c.Edv == edv)
+                .Include(c => c.UnidadeOrganizacional).AsSplitQuery()
+                .FirstOrDefaultAsync();
         }
         public async Task<List<Direito>> BuscarDireitosPorEDVColaboradorAsync(int eventoId, string edv)
         {
@@ -216,7 +218,7 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
                 .Include(d => d.Indicado).AsSplitQuery()
                 .Include(d => d.Beneficio).AsSplitQuery()
                 .Include(d => d.Retirado).AsSplitQuery()
-                .Include(d => d.Colaborador.UnidadeOrganizacional).AsSplitQuery()
+                .Include(d => d.Colaborador).ThenInclude(c => c.UnidadeOrganizacional).AsSplitQuery()
                 .ToListAsync();
 
         }

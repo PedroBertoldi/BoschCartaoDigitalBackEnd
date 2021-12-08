@@ -55,10 +55,12 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 lista = await _repository.ListaBeneficioEventoAtivoAsync();
                 if (lista == null)
                     lista = await _repository.ListaBeneficioProximoEventoAsync();
-            }else{
+            }
+            else
+            {
                 lista = await _repository.ListaBeneficioIdEventoAsync((int)id);
             }
-            
+
             if (lista == null)
             {
                 _errors.Add(new ErrorModel
@@ -172,13 +174,17 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
             List<CriarEditarBeneficiarioDireitoResponseResumido> beneficiosResponse = new List<CriarEditarBeneficiarioDireitoResponseResumido>();
             Colaborador colaborador = await _repository.BuscarColaboradorCpfEdvDataNascimentoAsync(request.Cpf, request.Edv, (DateTime)request.DataNascimento);
-            if(colaborador != null){
+            if (colaborador != null)
+            {
                 colaborador.NomeCompleto = request.NomeCompleto;
                 colaborador.UnidadeOrganizacionalId = request.UnidadeOrganizacionalId;
 
                 await _repository.EditarColaborador(colaborador);
-            }else{
-                colaborador = new Colaborador{
+            }
+            else
+            {
+                colaborador = new Colaborador
+                {
                     Cpf = request.Cpf,
                     NomeCompleto = request.NomeCompleto,
                     DataNascimento = request.DataNascimento,
@@ -189,7 +195,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 await _repository.CadastrarNovoColaborador(colaborador);
             }
 
-            if(request.beneficios.Count > 0){
+            if (request.beneficios.Count > 0)
+            {
                 foreach (CriarEditarBeneficiarioDireitoRequestResumido beneficio in request.beneficios)
                 {
                     try
@@ -202,7 +209,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                         return null;
                     }
 
-                    if(beneficio.QtdBeneficio > 0){
+                    if (beneficio.QtdBeneficio > 0)
+                    {
                         for (int i = 0; i < beneficio.QtdBeneficio; i++)
                         {
                             Direito direito = new Direito
@@ -217,7 +225,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                         }
                     }
 
-                    beneficiosResponse.Add(new CriarEditarBeneficiarioDireitoResponseResumido{
+                    beneficiosResponse.Add(new CriarEditarBeneficiarioDireitoResponseResumido
+                    {
                         EventoId = (int)beneficio.EventoId,
                         BeneficioId = (int)beneficio.BeneficioId,
                         QtdBeneficio = (int)beneficio.QtdBeneficio
@@ -262,7 +271,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
             List<CriarEditarBeneficiarioDireitoResponseResumido> beneficiosResponse = new List<CriarEditarBeneficiarioDireitoResponseResumido>();
 
-            if(request.beneficios.Count > 0){
+            if (request.beneficios.Count > 0)
+            {
                 foreach (CriarEditarBeneficiarioDireitoRequestResumido beneficio in request.beneficios)
                 {
                     try
@@ -277,7 +287,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
                     //REMOVENDO TODOS OS DIREITOS PARA INSERIR NOVOS QUE ESTAO ATUALIZADOS
                     List<Direito> direitos = await _repository.BuscarDireitoIdColaboradorIdEventoIdBeneficioAsync(colaborador.Id, (int)beneficio.EventoId, (int)beneficio.BeneficioId);
-                    if(direitos.Count > 0){
+                    if (direitos.Count > 0)
+                    {
                         foreach (Direito direito in direitos)
                         {
                             await _repository.ExcluirDireitoAsync(direito);
@@ -285,7 +296,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                     }
                     //REMOVENDO TODOS OS DIREITOS PARA INSERIR NOVOS QUE ESTAO ATUALIZADOS
 
-                    if(beneficio.QtdBeneficio > 0){
+                    if (beneficio.QtdBeneficio > 0)
+                    {
                         for (int i = 0; i < beneficio.QtdBeneficio; i++)
                         {
                             Direito direito = new Direito
@@ -300,7 +312,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                         }
                     }
 
-                    beneficiosResponse.Add(new CriarEditarBeneficiarioDireitoResponseResumido{
+                    beneficiosResponse.Add(new CriarEditarBeneficiarioDireitoResponseResumido
+                    {
                         EventoId = (int)beneficio.EventoId,
                         BeneficioId = (int)beneficio.BeneficioId,
                         QtdBeneficio = (int)beneficio.QtdBeneficio
@@ -372,7 +385,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         private async Task ValidarRelacionamentoBeneficioEventoIdBeneficioAsync(int beneficioId)
         {
             List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdBeneficioAsync(beneficioId);
-            if(beneficiosEvento.Count > 0){
+            if (beneficiosEvento.Count > 0)
+            {
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(beneficioId),
@@ -385,7 +399,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         private async Task ValidarRelacionamentoBeneficioEventoIdEventoAsync(int eventoId)
         {
             List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdEventoAsync(eventoId);
-            if(beneficiosEvento.Count > 0){
+            if (beneficiosEvento.Count > 0)
+            {
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(eventoId),
@@ -398,7 +413,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         private async Task ValidarRelacionamentoDireitoIdBeneficioAsync(int beneficioId)
         {
             List<Direito> direitos = await _repository.BuscarDireitoIdBeneficioAsync(beneficioId);
-            if(direitos.Count > 0){
+            if (direitos.Count > 0)
+            {
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(beneficioId),
@@ -411,7 +427,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         private async Task ValidarRelacionamentoDireitoIdEventoAsync(int eventoId)
         {
             List<Direito> direitos = await _repository.BuscarDireitoIdEventoAsync(eventoId);
-            if(direitos.Count > 0){
+            if (direitos.Count > 0)
+            {
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(eventoId),
@@ -424,7 +441,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         private async Task ValidarUnidadeOrganizacionalIdAsync(int id)
         {
             UnidadeOrganizacional unidadeOrganizacional = await _repository.BuscarUnidadeOrganizacionalIdAsync(id);
-            if(unidadeOrganizacional == null){
+            if (unidadeOrganizacional == null)
+            {
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(id),
@@ -437,7 +455,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         private async Task ValidarEventoIdAsync(int id)
         {
             Evento evento = await _repository.BuscarEventoPorIdAsync(id);
-            if(evento == null){
+            if (evento == null)
+            {
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(id),
@@ -450,7 +469,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         private async Task ValidarBeneficioIdAsync(int id)
         {
             Beneficio beneficio = await _repository.BuscarBeneficioPorIdAsync(id);
-            if(beneficio == null){
+            if (beneficio == null)
+            {
                 _errors.Add(new ErrorModel
                 {
                     FieldName = nameof(id),
@@ -489,7 +509,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 await _repository.EditarBeneficioAsync(beneficio);
 
             }
-            catch (OperacaoInvalidaException) {}
+            catch (OperacaoInvalidaException) { }
 
             return beneficio;
         }
@@ -497,7 +517,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         public async Task ExcluirBeneficioEventoIdBeneficioAsync(int beneficioId)
         {
             List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdBeneficioAsync(beneficioId);
-            if(beneficiosEvento.Count > 0)
+            if (beneficiosEvento.Count > 0)
             {
                 foreach (BeneficioEvento beneficioEvento in beneficiosEvento)
                 {
@@ -517,7 +537,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         public async Task ExcluirBeneficioEventoIdEventoAsync(int eventoId)
         {
             List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdEventoAsync(eventoId);
-            if(beneficiosEvento.Count > 0)
+            if (beneficiosEvento.Count > 0)
             {
                 foreach (BeneficioEvento beneficioEvento in beneficiosEvento)
                 {
@@ -537,7 +557,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         public async Task ExcluirDireitoIdBeneficioAsync(int beneficioId)
         {
             List<Direito> direitos = await _repository.BuscarDireitoIdBeneficioAsync(beneficioId);
-            if(direitos.Count > 0)
+            if (direitos.Count > 0)
             {
                 foreach (Direito direito in direitos)
                 {
@@ -557,7 +577,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         public async Task ExcluirDireitoIdEventoAsync(int eventoId)
         {
             List<Direito> direitos = await _repository.BuscarDireitoIdEventoAsync(eventoId);
-            if(direitos.Count > 0)
+            if (direitos.Count > 0)
             {
                 foreach (Direito direito in direitos)
                 {
@@ -577,7 +597,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         public async Task ExcluirDireitoIdColaboradorIdEventoAsync(int colaboradorId, int eventoId)
         {
             List<Direito> direitos = await _repository.BuscarDireitoIdColaboradorIdEventoAsync(colaboradorId, eventoId);
-            if(direitos.Count > 0)
+            if (direitos.Count > 0)
             {
                 foreach (Direito direito in direitos)
                 {
@@ -604,7 +624,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
                 await _repository.ExcluirBeneficioAsync(beneficio);
             }
-            catch (OperacaoInvalidaException) {}
+            catch (OperacaoInvalidaException) { }
         }
 
         public async Task ExcluirBeneficioCascataAsync(int id)
@@ -614,18 +634,20 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 Beneficio beneficio = await BuscarBeneficioPorIdAsync(id);
 
                 List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdBeneficioAsync(id);
-                if(beneficiosEvento.Count > 0){
+                if (beneficiosEvento.Count > 0)
+                {
                     await ExcluirBeneficioEventoIdBeneficioAsync(id);
                 }
 
                 List<Direito> direitos = await _repository.BuscarDireitoIdBeneficioAsync(id);
-                if(direitos.Count > 0){
+                if (direitos.Count > 0)
+                {
                     await ExcluirDireitoIdBeneficioAsync(id);
                 }
 
                 await _repository.ExcluirBeneficioAsync(beneficio);
             }
-            catch (OperacaoInvalidaException) {}
+            catch (OperacaoInvalidaException) { }
         }
 
         public async Task ExcluirEventoIdAsync(int id)
@@ -638,7 +660,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
                 await _repository.ExcluirEventoAsync(evento);
             }
-            catch (OperacaoInvalidaException) {}
+            catch (OperacaoInvalidaException) { }
         }
 
         public async Task ExcluirEventoIdCascataAsync(int id)
@@ -648,18 +670,20 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 Evento evento = await BuscarEventoIdAsync(id);
 
                 List<BeneficioEvento> beneficiosEvento = await _repository.BuscarBeneficioEventoIdEventoAsync(id);
-                if(beneficiosEvento.Count > 0){
+                if (beneficiosEvento.Count > 0)
+                {
                     await ExcluirBeneficioEventoIdEventoAsync(id);
                 }
 
                 List<Direito> direitos = await _repository.BuscarDireitoIdEventoAsync(id);
-                if(direitos.Count > 0){
+                if (direitos.Count > 0)
+                {
                     await ExcluirDireitoIdEventoAsync(id);
                 }
 
                 await _repository.ExcluirEventoAsync(evento);
             }
-            catch (OperacaoInvalidaException) {}
+            catch (OperacaoInvalidaException) { }
         }
 
         public async Task<List<Beneficio>> BuscarTodosBeneficiosAsync()
@@ -703,26 +727,30 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         public async Task<DireitosPorColaboradorAgrupadosADM> BuscarDireitosPorIdColaboradorAsync(DireitosColaboradorRequest request)
         {
             DireitosPorColaboradorAgrupadosADM resposta = default;
-            try{
+            try
+            {
                 var colab = await BuscarColaboradorPorIdAsync((int)request.idColaborador);
                 var evento = await BuscarEventoIdAsync((int)request.EventoID);
                 var indicado = await _repository.BuscarIndicado((int)request.EventoID, (int)request.idColaborador);
                 var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync((int)request.EventoID, (int)request.idColaborador);
                 resposta = new DireitosPorColaboradorAgrupadosADM
                 {
-                    Colaborador=colab,
+                    Colaborador = colab,
                     Evento = evento,
                     Indicado = indicado,
 
                 };
-                if(direitos==null){
-                    resposta.Direitos=new List<Direito>();
+                if (direitos == null)
+                {
+                    resposta.Direitos = new List<Direito>();
                 }
-                else{
-                    resposta.Direitos=direitos;
+                else
+                {
+                    resposta.Direitos = direitos;
                 }
             }
-            catch(OperacaoInvalidaException){
+            catch (OperacaoInvalidaException)
+            {
                 return null;
             }
             return resposta;
@@ -742,24 +770,26 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                     var idC = c.Id;
                     var indicado = await _repository.BuscarIndicado(idEvento, idC);
                     var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync(idEvento, idC);
-                    if(direitos.Count>0){ //Se o colaborador possui pelo menos 1 direito, coloca ele na resposta
-                    var direitosSalvar = new DireitosColaboradorAgrupadosSemEvento
+                    if (direitos.Count > 0)
+                    { //Se o colaborador possui pelo menos 1 direito, coloca ele na resposta
+                        var direitosSalvar = new DireitosColaboradorAgrupadosSemEvento
                         {
                             Colaborador = c,
                             Direitos = direitos,
-                            Indicado=indicado,
+                            Indicado = indicado,
                         };
                         resposta.ColaboradoresDireitos.Add(direitosSalvar);
                     }
 
-                } 
+                }
             }
-            catch(OperacaoInvalidaException){
+            catch (OperacaoInvalidaException)
+            {
                 return null;
             }
 
             return resposta;
-    }
+        }
 
         public async Task<List<UnidadeOrganizacional>> listarUnidadeOrganizacionalAsync()
         {
@@ -784,26 +814,29 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         public async Task<DireitosPorColaboradorAgrupadosADM> BuscarDireitosPorEDVColaboradorAsync(int idEvento, string edv)
         {
             DireitosPorColaboradorAgrupadosADM resposta = default;
-            try{
+            try
+            {
                 var colab = await BuscarColaboradorPorEDVsync(edv);
                 var evento = await BuscarEventoIdAsync(idEvento);
                 var indicado = await _repository.BuscarIndicado(idEvento, colab.Id);
                 var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync(idEvento, colab.Id);
                 resposta = new DireitosPorColaboradorAgrupadosADM
                 {
-                    Colaborador=colab,
+                    Colaborador = colab,
                     Evento = evento,
                     Indicado = indicado,
-
                 };
-                if(direitos==null){
-                    resposta.Direitos=new List<Direito>();
+                if (direitos == null)
+                {
+                    resposta.Direitos = new List<Direito>();
                 }
-                else{
-                    resposta.Direitos=direitos;
+                else
+                {
+                    resposta.Direitos = direitos;
                 }
             }
-            catch(OperacaoInvalidaException){
+            catch (OperacaoInvalidaException)
+            {
                 return null;
             }
             return resposta;
