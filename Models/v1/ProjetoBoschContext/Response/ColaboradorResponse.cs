@@ -10,5 +10,7 @@ namespace BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext.Response
         public string Cpf { get; set; }
         public string Edv { get; set; }
         public virtual UnidadeOrganizacionalResponse UnidadeOrganizacional { get; set; }
+        public int? OrigemId { get; set; }
+        public DateTime? DataDeCadastro { get; set; }
     }
 }

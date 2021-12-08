@@ -37,17 +37,35 @@ namespace BoschCartaoDigitalBackEnd.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+            modelBuilder.HasAnnotation("Relational:Collation", "Latin1_General_CI_AS");
 
             modelBuilder.Entity<Beneficio>(entity =>
             {
-                entity.Property(e => e.DescricaoNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
+                entity.ToTable("beneficio");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Descricao)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("descricao");
+
+                entity.Property(e => e.DescricaoNormalizada)
+                    .HasMaxLength(255)
+                    .HasColumnName("descricaoNormalizada")
+                    .HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
             });
 
             modelBuilder.Entity<BeneficioEvento>(entity =>
             {
                 entity.HasKey(e => new { e.BeneficioId, e.EventoId })
                     .HasName("pk_beneficioEvento_id");
+
+                entity.ToTable("beneficioEvento");
+
+                entity.Property(e => e.BeneficioId).HasColumnName("beneficioID");
+
+                entity.Property(e => e.EventoId).HasColumnName("eventoID");
 
                 entity.HasOne(d => d.Beneficio)
                     .WithMany(p => p.BeneficioEvento)
@@ -64,11 +82,43 @@ namespace BoschCartaoDigitalBackEnd.Database.Context
 
             modelBuilder.Entity<Colaborador>(entity =>
             {
-                entity.Property(e => e.Cpf).IsUnicode(false);
+                entity.ToTable("colaborador");
 
-                entity.Property(e => e.Edv).IsUnicode(false);
+                entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Senha).IsUnicode(false);
+                entity.Property(e => e.Cpf)
+                    .IsRequired()
+                    .HasMaxLength(11)
+                    .IsUnicode(false)
+                    .HasColumnName("cpf");
+
+                entity.Property(e => e.DataDeCadastro).HasColumnType("datetime");
+
+                entity.Property(e => e.DataNascimento)
+                    .HasColumnType("date")
+                    .HasColumnName("dataNascimento");
+
+                entity.Property(e => e.Edv)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("EDV");
+
+                entity.Property(e => e.NomeCompleto)
+                    .HasMaxLength(255)
+                    .HasColumnName("nomeCompleto");
+
+                entity.Property(e => e.OrigemId).HasColumnName("origemID");
+
+                entity.Property(e => e.Senha)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UnidadeOrganizacionalId).HasColumnName("unidadeOrganizacionalID");
+
+                entity.HasOne(d => d.Origem)
+                    .WithMany(p => p.InverseOrigem)
+                    .HasForeignKey(d => d.OrigemId)
+                    .HasConstraintName("fk_colaborador_origemID");
 
                 entity.HasOne(d => d.UnidadeOrganizacional)
                     .WithMany(p => p.Colaborador)
@@ -78,6 +128,24 @@ namespace BoschCartaoDigitalBackEnd.Database.Context
 
             modelBuilder.Entity<Direito>(entity =>
             {
+                entity.ToTable("direito");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.BeneficioId).HasColumnName("beneficioID");
+
+                entity.Property(e => e.ColaboradorId).HasColumnName("colaboradorID");
+
+                entity.Property(e => e.DataRetirada)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dataRetirada");
+
+                entity.Property(e => e.EventoId).HasColumnName("eventoID");
+
+                entity.Property(e => e.IndicadoId).HasColumnName("indicadoID");
+
+                entity.Property(e => e.RetiradoId).HasColumnName("retiradoID");
+
                 entity.HasOne(d => d.Beneficio)
                     .WithMany(p => p.Direito)
                     .HasForeignKey(d => d.BeneficioId)
@@ -108,13 +176,43 @@ namespace BoschCartaoDigitalBackEnd.Database.Context
 
             modelBuilder.Entity<Evento>(entity =>
             {
-                entity.Property(e => e.DescricaoNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
+                entity.ToTable("evento");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DataFim)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dataFim");
+
+                entity.Property(e => e.DataInicio)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dataInicio");
+
+                entity.Property(e => e.Descricao)
+                    .HasMaxLength(255)
+                    .HasColumnName("descricao");
+
+                entity.Property(e => e.DescricaoNormalizada)
+                    .HasMaxLength(255)
+                    .HasColumnName("descricaoNormalizada")
+                    .HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
+
+                entity.Property(e => e.Nome)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("nome");
             });
 
             modelBuilder.Entity<Permissao>(entity =>
             {
                 entity.HasKey(e => new { e.ColaboradorId, e.TipoPermissaoId })
                     .HasName("pk_permissao_colaboradorID_tipoPermissaoID");
+
+                entity.ToTable("permissao");
+
+                entity.Property(e => e.ColaboradorId).HasColumnName("colaboradorID");
+
+                entity.Property(e => e.TipoPermissaoId).HasColumnName("tipoPermissaoID");
 
                 entity.HasOne(d => d.Colaborador)
                     .WithMany(p => p.Permissao)
@@ -131,12 +229,36 @@ namespace BoschCartaoDigitalBackEnd.Database.Context
 
             modelBuilder.Entity<TipoPermissao>(entity =>
             {
-                entity.Property(e => e.DescricaoNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
+                entity.ToTable("tipoPermissao");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Descricao)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("descricao");
+
+                entity.Property(e => e.DescricaoNormalizada)
+                    .HasMaxLength(255)
+                    .HasColumnName("descricaoNormalizada")
+                    .HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
             });
 
             modelBuilder.Entity<UnidadeOrganizacional>(entity =>
             {
-                entity.Property(e => e.DescricaoNormalizada).HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
+                entity.ToTable("unidadeOrganizacional");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Descricao)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("descricao");
+
+                entity.Property(e => e.DescricaoNormalizada)
+                    .HasMaxLength(255)
+                    .HasColumnName("descricaoNormalizada")
+                    .HasComputedColumnSql("(CONVERT([nvarchar](255),upper(rtrim(ltrim([descricao])))))", false);
             });
 
             OnModelCreatingPartial(modelBuilder);
