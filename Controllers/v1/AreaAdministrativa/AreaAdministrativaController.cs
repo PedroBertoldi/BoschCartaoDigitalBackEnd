@@ -12,6 +12,7 @@ using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using BoschCartaoDigitalBackEnd.Extentions;
 
 
 namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
@@ -376,7 +377,6 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
             return (erros == null) ? Ok(_mapper.Map<List<UnidadeOrganizacionalResponse>>(resposta)) : BadRequest(erros);
         }
-
         /// <summary>
         /// Cadastra ou atualiza um colaborador e adiciona seus direitos de acordo com um evento.
         /// </summary>
@@ -387,8 +387,10 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CadastrarBeneficiario([FromBody] CriarEditarBeneficiarioRequest request)
         {
-            var beneficiario = await _business.CadastrarBeneficiarioAsync(request);
+            var admID =int.Parse(HttpContext.GetMyID()); //Registra o ID do usuário realizando a alteração
+            var beneficiario = await _business.CadastrarBeneficiarioAsync(request, admID);
             var erros = _business.BuscarErros();
+
 
             return (erros == null) ? Ok(_mapper.Map<BeneficiarioResponse>(beneficiario)) : BadRequest(erros);
         }

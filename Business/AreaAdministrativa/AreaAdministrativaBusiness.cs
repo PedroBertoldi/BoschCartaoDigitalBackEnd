@@ -34,6 +34,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         public async Task<Evento> BuscarEventoIdAsync(int id)
         {
+        //Recebe a id de um evento e retorna um objeto evento referente ao titular da ID
             Evento evento = await _repository.BuscarEventoPorIdAsync(id);
             if (evento == null)
             {
@@ -49,6 +50,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         public async Task<List<Beneficio>> ListaBeneficiosPorEventoAsync(int id)
         {
+            //Recebe o ID de um evento e retorna uma lista de objetos beneficio referente aos benecificios do evento em questão
             List<Beneficio> lista = default;
             if (id == 0)
             {
@@ -161,7 +163,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             return temp;
         }
 
-        public async Task<BeneficiarioResponse> CadastrarBeneficiarioAsync(CriarEditarBeneficiarioRequest request)
+        public async Task<BeneficiarioResponse> CadastrarBeneficiarioAsync(CriarEditarBeneficiarioRequest request, int userID)
         {
             try
             {
@@ -171,6 +173,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             {
                 return null;
             }
+            
 
             List<CriarEditarBeneficiarioDireitoResponseResumido> beneficiosResponse = new List<CriarEditarBeneficiarioDireitoResponseResumido>();
             Colaborador colaborador = await _repository.BuscarColaboradorCpfEdvDataNascimentoAsync(request.Cpf, request.Edv, (DateTime)request.DataNascimento);
@@ -190,6 +193,9 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                     DataNascimento = request.DataNascimento,
                     UnidadeOrganizacionalId = request.UnidadeOrganizacionalId,
                     Edv = request.Edv,
+                    OrigemId = userID,
+                    DataDeCadastro = DateTime.Now,
+                    
                 };
                 //VERIFICAR COM O GRUPO SE VAI SER NECESSARIO FAZER UMA VALIDAÇÃO ANTES DE TENTAR INSERIR UM NOVO COLABORADOR
                 await _repository.CadastrarNovoColaborador(colaborador);
@@ -482,6 +488,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         private async Task<Beneficio> BuscarBeneficioPorIdAsync(int id)
         {
+            //Recebe a ID de um beneficio e retorna um objeto Beneficio referente ao titular da id
             var beneficio = await _repository.BuscarBeneficioPorIdAsync(id);
             if (beneficio == null)
             {
@@ -688,6 +695,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         public async Task<List<Beneficio>> BuscarTodosBeneficiosAsync()
         {
+            //Retorna uma lista que contém todos os benefícios
             return await _repository.BuscarTodosBeneficiosAsync();
         }
 
@@ -711,6 +719,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         private async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
         {
+            //Recebe a id de um colaborador e retorna um objeto Colaborador referente ao titular da id
             var colaborador = await _repository.BuscarColaboradorPorIdAsync(id);
             if (colaborador == null)
             {
@@ -726,6 +735,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         public async Task<DireitosPorColaboradorAgrupadosADM> BuscarDireitosPorIdColaboradorAsync(DireitosColaboradorRequest request)
         {
+            //Recebe uma request que contém o id de um evento e o id de um colaborador e retorna uma lista com informações
+            //Sobre os direitos do colaborador e o indicado sugerido por ele, se existente
             DireitosPorColaboradorAgrupadosADM resposta = default;
             try
             {
@@ -758,7 +769,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         public async Task<DireitosTodosColaboradoresAgrupados> BuscarTodosDireitosPorColaborador(int idEvento)
         {
-            //Instancia o objeto que contém o evento e o objeto que contém colabs-direitos
+            //Recebe o ID de um evento e retorna uma lista com a seguinte estrutura:
+            //[EVENTO, [Beneficio1, [Beneficiario1, Beneficiario2]], [Beneficio2, [Beneficiario1, Beneficiario3],...]
             var resposta = new DireitosTodosColaboradoresAgrupados();
             try
             {
@@ -799,6 +811,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
         private async Task<Colaborador> BuscarColaboradorPorEDVsync(string edv)
         {
+            //Recebe o EDV de um colaborador e retorna um objeto Colaborador referente ao titular do EDV
             var colaborador = await _repository.BuscarColaboradorPorEDV(edv);
             if (colaborador == null)
             {
@@ -813,6 +826,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         }
         public async Task<DireitosPorColaboradorAgrupadosADM> BuscarDireitosPorEDVColaboradorAsync(int idEvento, string edv)
         {
+            //Recebe a ID de um evento e EDV de um colaborador e retorna todos os direitos do colaborador naquele evento
             DireitosPorColaboradorAgrupadosADM resposta = default;
             try
             {
