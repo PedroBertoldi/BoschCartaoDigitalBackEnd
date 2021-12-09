@@ -40,9 +40,9 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             return await _repository.BuscarEventoPorIdAsync(id);
         }
 
-        public async Task<Evento> BuscarEventoIdAsync(int id)
+        private async Task<Evento> BuscarEventoIdAsync(int id)
         {
-        //Recebe a id de um evento e retorna um objeto evento referente ao titular da ID
+            //Recebe a id de um evento e retorna um objeto evento referente ao titular da ID
             Evento evento = await _repository.BuscarEventoPorIdAsync(id);
             if (evento == null)
             {
@@ -172,24 +172,18 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         /// <returns></returns>
         public async Task<Beneficio> CadastrarBeneficioAsync(CriarEditarBeneficioRequest request)
         {
-            var teste = await _repository.BuscarBeneficioPorDescricaoAsync(request.Beneficio);
-            if (teste != null)
+            Beneficio beneficio = default;
+            beneficio = await _repository.BuscarBeneficioPorDescricaoAsync(request.Beneficio);
+            if (beneficio == null)
             {
-                _errors.Add(new ErrorModel
+                beneficio = new Beneficio
                 {
-                    FieldName = nameof(request.Beneficio),
-                    Message = $"Já existe um beneficio com a seguinte descrição: {request.Beneficio}"
-                });
-                return null;
+                    Descricao = request.Beneficio.Trim(),
+                };
+
+                await _repository.CriarBeneficioAsync(beneficio);
             }
-
-            var temp = new Beneficio
-            {
-                Descricao = request.Beneficio.Trim(),
-            };
-
-            await _repository.CriarBeneficioAsync(temp);
-            return temp;
+            return beneficio;
         }
 
         /// <summary>
@@ -208,7 +202,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             {
                 return null;
             }
-            
+
 
             List<CriarEditarBeneficiarioDireitoResponseResumido> beneficiosResponse = new List<CriarEditarBeneficiarioDireitoResponseResumido>();
             Colaborador colaborador = await _repository.BuscarColaboradorCpfEdvDataNascimentoAsync(request.Cpf, request.Edv, (DateTime)request.DataNascimento);
@@ -230,7 +224,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                     Edv = request.Edv,
                     OrigemId = userID,
                     DataDeCadastro = DateTime.Now,
-                    
+
                 };
                 //VERIFICAR COM O GRUPO SE VAI SER NECESSARIO FAZER UMA VALIDAÇÃO ANTES DE TENTAR INSERIR UM NOVO COLABORADOR
                 await _repository.CadastrarNovoColaborador(colaborador);
@@ -722,6 +716,22 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 await _repository.ExcluirBeneficioAsync(beneficio);
             }
             catch (OperacaoInvalidaException) { }
+        }
+        /// <summary>
+        /// Remove um beneficio de um evento
+        /// </summary>
+        /// <param name="idEvento"></param>
+        /// <param name="idBeneficio"></param>
+        /// <returns></returns>
+        public async Task ExcluirBeneficioDoEventoAsync(int idEvento, int idBeneficio)
+        {
+            try
+            {
+                var evento = await BuscarEventoIdAsync(idEvento);
+                var beneficio = await BuscarBeneficioPorIdAsync(idBeneficio);
+                await _repository.RemoverDireitoDeEventoAsync(evento.Id, beneficio.Id);
+            }
+            catch (OperacaoInvalidaException){}
         }
 
         /// <summary>

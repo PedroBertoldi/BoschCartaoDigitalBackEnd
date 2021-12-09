@@ -125,7 +125,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ListarBeneficiosEvento([FromRoute] int? id)
         {
-            if(id == null) return BadRequest(new ErrorModel("ID é um parametro necessário", nameof(id)));
+            if (id == null) return BadRequest(new ErrorModel("ID é um parametro necessário", nameof(id)));
 
             var resposta = await _business.ListaBeneficiosPorEventoAsync((int)id);
             var erros = _business.BuscarErros();
@@ -163,8 +163,26 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         {
             if (id == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(id)));
 
-            // await _business.ExcluirBeneficioAsync((int)id);
             await _business.ExcluirBeneficioCascataAsync((int)id);
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
+        /// <summary>
+        /// Remove um beneficio de um evento.
+        /// </summary>
+        /// <param name="eventoId">ID do evento</param>
+        /// <param name="id">ID do beneficio</param>
+        /// <returns></returns>
+        [HttpDelete("Beneficio/{eventoId}/{id}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> RemoverBeneficioDeEvento([FromRoute] int? eventoId, [FromRoute] int? id)
+        {
+            if (eventoId == null || id == null) return BadRequest(new ErrorResponse($"{nameof(eventoId)} e {nameof(id)} são campos obrigatórios"));
+
+            await _business.ExcluirBeneficioDoEventoAsync((int)eventoId, (int)id);
             var erros = _business.BuscarErros();
 
             return (erros == null) ? NoContent() : BadRequest(erros);
@@ -187,7 +205,11 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
 
             return (erros == null) ? Ok(_mapper.Map<BeneficioResponse>(beneficio)) : BadRequest(erros);
         }
-
+        /// <summary>
+        /// Cadastra um novo beneficio no evento.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("Evento/criar-beneficio-no-evento")]
         [Authorize(Roles = "HRL")]
         [ProducesResponseType(typeof(BeneficioEventoResponse), StatusCodes.Status200OK)]
@@ -212,7 +234,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         public async Task<IActionResult> BuscarDireitos([FromQuery] DireitosColaboradorRequest request)
         {
             var resposta = await _business.BuscarDireitosPorIdColaboradorAsync(request);
-            
+
             var erros = _business.BuscarErros();
             return (erros == null) ? Ok(_mapper.Map<DireitosPorColaboradorAgrupadosResponseADM>(resposta)) : BadRequest(erros);
         }
@@ -244,7 +266,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         [ProducesResponseType(typeof(List<UnidadeOrganizacionalResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ListarUnidadeOrganizacional()
-        {        
+        {
             var resposta = await _business.listarUnidadeOrganizacionalAsync();
             var erros = _business.BuscarErros();
             return (erros == null) ? Ok(_mapper.Map<List<UnidadeOrganizacionalResponse>>(resposta)) : BadRequest(erros);
@@ -260,7 +282,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CadastrarBeneficiario([FromBody] CriarEditarBeneficiarioRequest request)
         {
-            var admID =int.Parse(HttpContext.GetMyID()); //Registra o ID do usuário realizando a alteração
+            var admID = int.Parse(HttpContext.GetMyID()); //Registra o ID do usuário realizando a alteração
             var beneficiario = await _business.CadastrarBeneficiarioAsync(request, admID);
             var erros = _business.BuscarErros();
 
@@ -299,7 +321,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
         public async Task<IActionResult> BuscarDireitos([FromRoute] int? eventoID, [FromRoute] string colaboradorEDV)
         {
             var resposta = await _business.BuscarDireitosPorEDVColaboradorAsync((int)eventoID, colaboradorEDV);
-            
+
             var erros = _business.BuscarErros();
             return (erros == null) ? Ok(_mapper.Map<DireitosPorColaboradorAgrupadosResponseADM>(resposta)) : BadRequest(erros);
         }
