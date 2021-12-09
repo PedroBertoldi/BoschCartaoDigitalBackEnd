@@ -12,7 +12,6 @@ using BoschCartaoDigitalBackEnd.Models.v1.AreaAdministrativa.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using BoschCartaoDigitalBackEnd.Extentions;
 
 
 namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
@@ -132,6 +131,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
             return (erros == null) ? Ok(_mapper.Map<List<ListarBeneficiosEventoResponse>>(resposta)) : BadRequest(erros);
         }
+
         //TODO: Remover
         /// <summary>
         /// Cadastra um tipo de beneficio no banco de dados.
@@ -377,6 +377,7 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
             return (erros == null) ? Ok(_mapper.Map<List<UnidadeOrganizacionalResponse>>(resposta)) : BadRequest(erros);
         }
+
         /// <summary>
         /// Cadastra ou atualiza um colaborador e adiciona seus direitos de acordo com um evento.
         /// </summary>
