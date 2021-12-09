@@ -64,10 +64,6 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         {
             return await _db.Direito.Where(e => e.EventoId == eventoId).ToListAsync();
         }
-        public async Task<List<Direito>> BuscarDireitoIdColaboradorIdEventoAsync(int colaboradorId, int eventoId)
-        {
-            return await _db.Direito.Where(e => e.ColaboradorId == colaboradorId && e.EventoId == eventoId).ToListAsync();
-        }
         public async Task<List<Direito>> BuscarDireitoIdColaboradorIdEventoIdBeneficioAsync(int colaboradorId, int eventoId, int beneficioId)
         {
             return await _db.Direito.Where(e => e.ColaboradorId == colaboradorId && e.EventoId == eventoId && e.BeneficioId == beneficioId).ToListAsync();
@@ -139,10 +135,6 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
             await _db.SaveChangesAsync();
             return evento;
         }
-        public async Task<List<Beneficio>> BuscarTodosBeneficiosAsync()
-        {
-            return await _db.Beneficio.ToListAsync();
-        }
         public async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
         {
             return await _db.Colaborador.FindAsync(id);
@@ -211,16 +203,6 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
             return await _db.Colaborador.Where(c => c.Edv == edv)
                 .Include(c => c.UnidadeOrganizacional).AsSplitQuery()
                 .FirstOrDefaultAsync();
-        }
-        public async Task<List<Direito>> BuscarDireitosPorEDVColaboradorAsync(int eventoId, string edv)
-        {
-            return await _db.Direito.Where(d => d.EventoId == eventoId && d.Colaborador.Edv == edv)
-                .Include(d => d.Indicado).AsSplitQuery()
-                .Include(d => d.Beneficio).AsSplitQuery()
-                .Include(d => d.Retirado).AsSplitQuery()
-                .Include(d => d.Colaborador).ThenInclude(c => c.UnidadeOrganizacional).AsSplitQuery()
-                .ToListAsync();
-
         }
     }
 }

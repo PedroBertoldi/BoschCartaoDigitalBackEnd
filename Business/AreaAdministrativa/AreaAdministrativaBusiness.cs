@@ -21,12 +21,20 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         {
             _repository = repository;
         }
-
+        /// <summary>
+        /// Busca todos os eventos disponíveis
+        /// </summary>
+        /// <param name="paginacao"></param>
+        /// <returns></returns>
         public async Task<List<Evento>> BuscarTodosEventosAsync(PaginacaoRequest paginacao)
         {
             return await _repository.BuscarTodosEventosAsync(paginacao);
         }
-
+        /// <summary>
+        /// Busca um evento por ID
+        /// </summary>
+        /// <param name="id">ID do evento</param>
+        /// <returns></returns>
         public async Task<Evento> BuscarEventoPorIdAsync(int id)
         {
             return await _repository.BuscarEventoPorIdAsync(id);
@@ -47,7 +55,11 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
             return evento;
         }
-
+        /// <summary>
+        /// lista todos os beneficios por evento
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<List<Beneficio>> ListaBeneficiosPorEventoAsync(int id)
         {
             //Recebe o ID de um evento e retorna uma lista de objetos beneficio referente aos benecificios do evento em questão
@@ -74,7 +86,11 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
             return lista;
         }
-
+        /// <summary>
+        /// cria um evento.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task<Evento> CriarEventoAsync(CriarEditarEventoRequest request)
         {
             Evento retono = default;
@@ -96,7 +112,11 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
             return retono;
         }
-
+        /// <summary>
+        /// verifica se a data do evento é valida
+        /// </summary>
+        /// <param name="inicio"></param>
+        /// <param name="fim"></param>
         private void ValidarDataEvento(DateTime inicio, DateTime fim)
         {
             if (fim.Date < inicio.Date)
@@ -109,7 +129,12 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 throw new OperacaoInvalidaException();
             }
         }
-
+        /// <summary>
+        /// Edita as informações de um evento
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="id">id do evento</param>
+        /// <returns></returns>
         public async Task<Evento> EditarEventoAsync(CriarEditarEventoRequest request, int id)
         {
             var evento = await _repository.BuscarEventoPorIdAsync(id);
@@ -140,7 +165,11 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
             return evento;
         }
-
+        /// <summary>
+        /// Cadastra um novo beneficio
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task<Beneficio> CadastrarBeneficioAsync(CriarEditarBeneficioRequest request)
         {
             var teste = await _repository.BuscarBeneficioPorDescricaoAsync(request.Beneficio);
@@ -669,48 +698,6 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
         }
 
         /// <summary>
-        /// Função que exclui todos os direitos que contenham o colaboradorId e o eventoId no mesmo registro.
-        /// </summary>
-        /// <param name="colaboradorId">id do colaborador que sera usado para a exclusão</param>
-        /// <param name="eventoId">id do evento que sera usado para a exclusão</param>
-        public async Task ExcluirDireitoIdColaboradorIdEventoAsync(int colaboradorId, int eventoId)
-        {
-            List<Direito> direitos = await _repository.BuscarDireitoIdColaboradorIdEventoAsync(colaboradorId, eventoId);
-            if (direitos.Count > 0)
-            {
-                foreach (Direito direito in direitos)
-                {
-                    await _repository.ExcluirDireitoAsync(direito);
-                }
-            }
-            else
-            {
-                _errors.Add(new ErrorModel
-                {
-                    FieldName = nameof(direitos),
-                    Message = $"Não existe nenhum Direito que tenha o colaboradorId: {colaboradorId}, e o eventoId: {eventoId}."
-                });
-            }
-        }
-
-        /// <summary>
-        /// Função que exclui um beneficio pelo id desde que este beneficio não tenha vinculos com evento ou direito.
-        /// </summary>
-        /// <param name="id">id do beneficio que sera usado para a exclusão</param>
-        public async Task ExcluirBeneficioAsync(int id)
-        {
-            try
-            {
-                Beneficio beneficio = await BuscarBeneficioPorIdAsync(id);
-                await ValidarRelacionamentoBeneficioEventoIdBeneficioAsync(id);
-                await ValidarRelacionamentoDireitoIdBeneficioAsync(id);
-
-                await _repository.ExcluirBeneficioAsync(beneficio);
-            }
-            catch (OperacaoInvalidaException) { }
-        }
-
-        /// <summary>
         /// Função que exclui um beneficio pelo id e excluir todos os relacionamentos com evento ou direito que este beneficio tenha.
         /// </summary>
         /// <param name="id">id do beneficio que sera usado para a exclusão</param>
@@ -733,23 +720,6 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 }
 
                 await _repository.ExcluirBeneficioAsync(beneficio);
-            }
-            catch (OperacaoInvalidaException) { }
-        }
-
-        /// <summary>
-        /// Função que exclui um evento pelo id desde que este evento não tenha vinculos com beneficio ou direito.
-        /// </summary>
-        /// <param name="id">id do evento que sera usado para a exclusão</param>
-        public async Task ExcluirEventoIdAsync(int id)
-        {
-            try
-            {
-                Evento evento = await BuscarEventoIdAsync(id);
-                await ValidarRelacionamentoBeneficioEventoIdEventoAsync(id);
-                await ValidarRelacionamentoDireitoIdEventoAsync(id);
-
-                await _repository.ExcluirEventoAsync(evento);
             }
             catch (OperacaoInvalidaException) { }
         }
@@ -780,15 +750,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
             catch (OperacaoInvalidaException) { }
         }
-        /// <summary>
-        /// Retorna todos os Beneficios existentes
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<Beneficio>> BuscarTodosBeneficiosAsync()
-        {
-            //Retorna uma lista que contém todos os benefícios
-            return await _repository.BuscarTodosBeneficiosAsync();
-        }
+
         /// <summary>
         /// Retorna um único beneficio pelo seu ID
         /// </summary>
