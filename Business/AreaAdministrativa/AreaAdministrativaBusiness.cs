@@ -780,13 +780,20 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
             catch (OperacaoInvalidaException) { }
         }
-
+        /// <summary>
+        /// Retorna todos os Beneficios existentes
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<Beneficio>> BuscarTodosBeneficiosAsync()
         {
             //Retorna uma lista que contém todos os benefícios
             return await _repository.BuscarTodosBeneficiosAsync();
         }
-
+        /// <summary>
+        /// Retorna um único beneficio pelo seu ID
+        /// </summary>
+        /// <param name="id">ID do beneficio</param>
+        /// <returns></returns>        
         public async Task<Beneficio> BuscarUnicoBeneficioPorIdAsync(int id)
         {
             Beneficio retorno = default;
@@ -797,14 +804,22 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             catch (OperacaoInvalidaException) { }
             return retorno;
         }
-
+        /// <summary>
+        /// Cria um novo tipo de beneficio e atrela a um evento
+        /// </summary>
+        /// <param name="request">Parametros necessários</param>
+        /// <returns></returns>
         public async Task<BeneficioEvento> CriarEAtrelarBeneficioAsync(CriarEAtrelarBeneficioRequest request)
         {
             var beneficio = await CadastrarBeneficioAsync(new CriarEditarBeneficioRequest { Beneficio = request.Beneficio });
             var beneficioEvento = await CriarRelacaoBeneficioEventoAsync(new RelacaoBeneficioEventoRequest { BeneficioId = beneficio.Id, EventoId = request.EventoId });
             return beneficioEvento;
         }
-
+        /// <summary>
+        /// Busca um colaborador por ID, caso não encontrado produz uma exceção
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
         {
             //Recebe a id de um colaborador e retorna um objeto Colaborador referente ao titular da id
@@ -820,7 +835,11 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
             return colaborador;
         }
-
+        /// <summary>
+        /// Busca os direitos por colaborador agrupado.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task<DireitosPorColaboradorAgrupadosADM> BuscarDireitosPorIdColaboradorAsync(DireitosColaboradorRequest request)
         {
             //Recebe uma request que contém o id de um evento e o id de um colaborador e retorna uma lista com informações
@@ -854,7 +873,11 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
             return resposta;
         }
-
+        /// <summary>
+        /// Busca todos os direitos de todos colaboradores em um evento
+        /// </summary>
+        /// <param name="idEvento"></param>
+        /// <returns></returns>
         public async Task<DireitosTodosColaboradoresAgrupados> BuscarTodosDireitosPorColaborador(int idEvento)
         {
             //Recebe o ID de um evento e retorna uma lista com a seguinte estrutura:
@@ -890,12 +913,19 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
             return resposta;
         }
-
+        /// <summary>
+        /// Retorna todas as unidades organizacionais
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<UnidadeOrganizacional>> listarUnidadeOrganizacionalAsync()
         {
             return await _repository.listarUnidadeOrganizacional();
         }
-
+        /// <summary>
+        /// busca um colaborador pelo seu código EDV
+        /// </summary>
+        /// <param name="edv"></param>
+        /// <returns></returns>
         private async Task<Colaborador> BuscarColaboradorPorEDVsync(string edv)
         {
             //Recebe o EDV de um colaborador e retorna um objeto Colaborador referente ao titular do EDV
@@ -911,7 +941,12 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             }
             return colaborador;
         }
-
+        /// <summary>
+        /// Busca os direitos de um colaborador em um evento pelo seu edv
+        /// </summary>
+        /// <param name="idEvento"></param>
+        /// <param name="edv"></param>
+        /// <returns></returns>
         public async Task<DireitosPorColaboradorAgrupadosADM> BuscarDireitosPorEDVColaboradorAsync(int idEvento, string edv)
         {
             //Recebe a ID de um evento e EDV de um colaborador e retorna todos os direitos do colaborador naquele evento
