@@ -867,9 +867,22 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                     var direitos = await _repository.BuscarDireitosPorIdColaboradorAsync(idEvento, idC);
                     if (direitos.Count > 0)
                     { //Se o colaborador possui pelo menos 1 direito, coloca ele na resposta
+                        //Montagem do Objeto ColaboradorAlterado
+                        var colab = new ColaboradorAlterado();
+                        var Origem = "Importado";
+                        colab.Cpf=c.Cpf;
+                        colab.DataNascimento=c.DataNascimento;
+                        colab.Edv = c.Edv;
+                        colab.Id = c.Id;
+                        colab.UnidadeOrganizacional = c.UnidadeOrganizacional;
+                        if (c.OrigemId!=null){
+                            var origemColaborador = await _repository.BuscarColaboradorPorIdAsync((int)c.OrigemId);
+                            Origem=origemColaborador.NomeCompleto;
+                        }
                         var direitosSalvar = new DireitosColaboradorAgrupadosSemEvento
                         {
-                            Colaborador = c,
+                            Colaborador = colab,
+                            origem = Origem,
                             Direitos = direitos,
                             Indicado = indicado,
                         };

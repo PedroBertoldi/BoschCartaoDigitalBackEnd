@@ -36,6 +36,9 @@ namespace BoschCartaoDigitalBackEnd.MappingProfiles
             CreateMap<ColaboradoresAgrupadosAoDireito, ColaboradoresAgrupadosAoDireitoResponse>();
             CreateMap<BeneficiarioResumido, BeneficiarioResumidoResponse>();
 
+            CreateMap<ColaboradorAlterado, ColaboradorAlteradoResponse>();
+
+
 
 
 
