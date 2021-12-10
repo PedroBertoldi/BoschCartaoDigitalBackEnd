@@ -284,10 +284,11 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 
             List<CriarEditarBeneficiarioDireitoResponseResumido> beneficiosResponse = new List<CriarEditarBeneficiarioDireitoResponseResumido>();
 
-            await _repository.ExcluirDireitosAsync(colaborador.DireitoColaborador.ToList());
-
             if (request.beneficios.Count > 0)
             {
+                var tempEventoId = request.beneficios.First().EventoId;
+                var paraRemover = colaborador.DireitoColaborador.Where(d => d.EventoId == tempEventoId && d.DataRetirada == null).ToList();
+                await _repository.ExcluirDireitosAsync(paraRemover);
                 foreach (CriarEditarBeneficiarioDireitoRequestResumido beneficio in request.beneficios)
                 {
                     try
