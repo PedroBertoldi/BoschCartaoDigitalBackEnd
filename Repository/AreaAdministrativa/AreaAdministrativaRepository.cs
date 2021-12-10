@@ -58,10 +58,10 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
                 .Include(e => e.BeneficioEvento).AsSplitQuery()
                 .Include(e => e.Direito).AsSplitQuery()
                 .FirstOrDefaultAsync();
-            evento.Direito = evento.Direito.Where(d => d.BeneficioId != idBeneficio && d.DataRetirada == null).ToList();
+            var paraRemover = evento.Direito.Where(d => d.BeneficioId == idBeneficio && d.DataRetirada == null).ToList();
             evento.BeneficioEvento = evento.BeneficioEvento.Where(b => b.BeneficioId != idBeneficio).ToList();
             _db.Attach(evento).Collection(e => e.BeneficioEvento).IsModified = true;
-            _db.Attach(evento).Collection(e => e.Direito).IsModified = true;
+            _db.RemoveRange(paraRemover);
             await _db.SaveChangesAsync();
         }
         public async Task<List<BeneficioEvento>> BuscarBeneficioEventoIdBeneficioAsync(int beneficioId)
