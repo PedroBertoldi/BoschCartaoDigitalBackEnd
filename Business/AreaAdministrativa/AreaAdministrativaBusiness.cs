@@ -870,6 +870,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                         //Montagem do Objeto ColaboradorAlterado
                         var colab = new ColaboradorAlterado();
                         var Origem = "Importado";
+                        colab.NomeCompleto = c.NomeCompleto;
                         colab.Cpf=c.Cpf;
                         colab.DataNascimento=c.DataNascimento;
                         colab.Edv = c.Edv;
