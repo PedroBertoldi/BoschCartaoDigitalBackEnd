@@ -54,9 +54,14 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         }
         public async Task RemoverDireitoDeEventoAsync(int idEvento, int idBeneficio)
         {
-            var evento = await _db.Evento.Where(e => e.Id == idEvento).Include(e => e.BeneficioEvento).AsSplitQuery().FirstOrDefaultAsync();
+            var evento = await _db.Evento.Where(e => e.Id == idEvento)
+                .Include(e => e.BeneficioEvento).AsSplitQuery()
+                .Include(e => e.Direito).AsSplitQuery()
+                .FirstOrDefaultAsync();
+            evento.Direito = evento.Direito.Where(d => d.BeneficioId != idBeneficio && d.DataRetirada == null).ToList();
             evento.BeneficioEvento = evento.BeneficioEvento.Where(b => b.BeneficioId != idBeneficio).ToList();
             _db.Attach(evento).Collection(e => e.BeneficioEvento).IsModified = true;
+            _db.Attach(evento).Collection(e => e.Direito).IsModified = true;
             await _db.SaveChangesAsync();
         }
         public async Task<List<BeneficioEvento>> BuscarBeneficioEventoIdBeneficioAsync(int beneficioId)
