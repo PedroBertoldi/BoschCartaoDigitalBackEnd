@@ -132,6 +132,40 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             return (erros == null) ? Ok(_mapper.Map<List<ListarBeneficiosEventoResponse>>(resposta)) : BadRequest(erros);
         }
 
+        //TODO: Remover
+        /// <summary>
+        /// Cadastra um tipo de beneficio no banco de dados.
+        /// </summary>
+        /// <param name="request">Parametros necessários</param>
+        [HttpPost("Beneficio")]
+        [Authorize(Roles = "HRL")]
+        [ProducesResponseType(typeof(BeneficioResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CadastrarBeneficio([FromBody] CriarEditarBeneficioRequest request)
+        {
+            var beneficio = await _business.CadastrarBeneficioAsync(request);
+            var erros = _business.BuscarErros();
+
+            return(erros == null) ? Created(HttpContext.GetLocationURI($"api/beneficio/{beneficio.Id}"), _mapper.Map<BeneficioResponse>(beneficio)) : 
+                BadRequest(erros); 
+        }
+
+        //TODO: Remover
+        /// <summary>
+        /// Cria uma relação entre um beneficio e um evento.
+        /// </summary>
+        /// <param name="request">Parametros necessarios para criar a relação</param>
+        [HttpPost("Beneficio/criar-relacao")]
+        [Authorize(Roles = "HRL")]
+        [ProducesResponseType(typeof(BeneficioEventoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CriarRelacaoBeneficioEvento([FromBody] RelacaoBeneficioEventoRequest request)
+        {
+            var relacao = await _business.CriarRelacaoBeneficioEventoAsync(request);
+            var erros = _business.BuscarErros();
+            return (erros != null) ? BadRequest(erros) : Ok(_mapper.Map<BeneficioEventoResponse>(relacao));
+        }
+
         /// <summary>
         /// Modifica as informações de um Beneficio.
         /// </summary>
@@ -167,6 +201,100 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
 
             return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
+        //TODO: Remover
+        /// <summary>
+        /// Exclui BeneficioEvento pelo beneficioId.
+        /// </summary>
+        /// <param name="beneficioId">beneficioId do BeneficioEvento a ser excluido</param>
+        [HttpDelete("BeneficioEvento/Beneficio/{beneficioId}")]
+        [Authorize(Roles = "HRL")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ExcluirBeneficioEventoIdBeneficio([FromRoute] int? beneficioId)
+        {
+            if (beneficioId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(beneficioId)));
+
+            await _business.ExcluirBeneficioEventoIdBeneficioAsync((int)beneficioId);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
+        //TODO: Remover
+        /// <summary>
+        /// Exclui BeneficioEvento pelo eventoId.
+        /// </summary>
+        /// <param name="eventoId">eventoId do BeneficioEvento a ser excluido</param>
+        [HttpDelete("BeneficioEvento/Evento/{eventoId}")]
+        [Authorize(Roles = "HRL")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ExcluirBeneficioEventoIdEvento([FromRoute] int? eventoId)
+        {
+            if (eventoId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(eventoId)));
+
+            await _business.ExcluirBeneficioEventoIdEventoAsync((int)eventoId);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
+        //TODO: Remover
+        /// <summary>
+        /// Exclui Direito pelo beneficioId.
+        /// </summary>
+        /// <param name="beneficioId">beneficioId do Direito a ser excluido</param>
+        [HttpDelete("Direito/Beneficio/{beneficioId}")]
+        [Authorize(Roles = "HRL")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ExcluirDireitoIdBeneficio([FromRoute] int? beneficioId)
+        {
+            if (beneficioId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(beneficioId)));
+
+            await _business.ExcluirDireitoIdBeneficioAsync((int)beneficioId);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
+        //TODO: Remover
+        /// <summary>
+        /// Exclui Direito pelo eventoId.
+        /// </summary>
+        /// <param name="eventoId">eventoId do Direito a ser excluido</param>
+        [HttpDelete("Direito/Evento/{eventoId}")]
+        [Authorize(Roles = "HRL")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ExcluirDireitoIdEvento([FromRoute] int? eventoId)
+        {
+            if (eventoId == null) return BadRequest(new ErrorResponse("O campo ID é obrigatório", nameof(eventoId)));
+
+            await _business.ExcluirDireitoIdEventoAsync((int)eventoId);
+
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
+        }
+
+        //TODO: Remover
+        /// <summary>
+        /// Retorna todos os beneficios cadastrados independente de evento
+        /// </summary>
+        [HttpGet("Beneficio")]
+        [Authorize(Roles = "HRL")]
+        [ProducesResponseType(typeof(List<BeneficioResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> BuscarTodosBeneficios()
+        {
+            var beneficios = await _business.BuscarTodosBeneficiosAsync();
+            var erros = _business.BuscarErros();
+            return (erros == null) ? Ok(_mapper.Map<List<BeneficioResponse>>(beneficios)) : BadRequest(erros);
         }
 
         /// <summary>
@@ -307,6 +435,27 @@ namespace BoschCartaoDigitalBackEnd.Controllers.v1.AreaAdministrativa
             var erros = _business.BuscarErros();
 
             return (erros == null) ? Ok(_mapper.Map<BeneficiarioResponse>(beneficiario)) : BadRequest(erros);
+        }
+
+        //TODO: Remover
+        /// <summary>
+        /// Exclui todos os direitos que tenham o mesmo colaboradorId e eventoId passados.
+        /// </summary>
+        /// <param name="colaboradorId">colaboradorId do Direito a ser excluido</param>
+        /// <param name="eventoId">eventoId do Direito a ser excluido</param>
+        [HttpDelete("Direito/ColaboradorEvento/{colaboradorId}/{eventoId}")]
+        [Authorize(Roles = "HRL")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ExcluirDireitoIdColaboradorIdEvento([FromRoute] int? colaboradorId, [FromRoute] int? eventoId)
+        {
+            if (colaboradorId == null) return BadRequest(new ErrorResponse("O ID do colaborador é obrigatório", nameof(colaboradorId)));
+            if (eventoId == null) return BadRequest(new ErrorResponse("O ID do evento é obrigatório", nameof(eventoId)));
+
+            await _business.ExcluirDireitoIdColaboradorIdEventoAsync((int)colaboradorId, (int)eventoId);
+            var erros = _business.BuscarErros();
+
+            return (erros == null) ? NoContent() : BadRequest(erros);
         }
 
         /// <summary>
