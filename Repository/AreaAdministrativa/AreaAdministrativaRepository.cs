@@ -145,6 +145,11 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
             await _db.SaveChangesAsync();
             return direito;
         }
+        public async Task ExcluirDireitosAsync(List<Direito> direitos)
+        {
+            _db.RemoveRange(direitos);
+            await _db.SaveChangesAsync();
+        }
         public async Task<Evento> ExcluirEventoAsync(Evento evento)
         {
             _db.Entry(evento).State = EntityState.Deleted;
@@ -158,6 +163,11 @@ namespace BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa
         public async Task<Colaborador> BuscarColaboradorPorIdAsync(int id)
         {
             return await _db.Colaborador.FindAsync(id);
+        }
+        public async Task<Colaborador> BuscarColaboradorComDireitosAsync(int id)
+        {
+            return await _db.Colaborador.Where(c => c.Id == id)
+                .Include(c => c.DireitoColaborador).AsSplitQuery().FirstAsync();
         }
         public async Task<Colaborador> BuscarColaboradorCpfEdvDataNascimentoAsync(string Cpf, string Edv, DateTime DataNascimento)
         {

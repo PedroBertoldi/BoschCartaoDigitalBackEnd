@@ -10,6 +10,7 @@ using BoschCartaoDigitalBackEnd.Models.v1.ProjetoBoschContext;
 using BoschCartaoDigitalBackEnd.Repository.AreaAdministrativa;
 using BoschCartaoDigitalBackEnd.Business.Commom;
 using BoschCartaoDigitalBackEnd.Exceptions.Commom;
+using System.Linq;
 
 namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
 {
@@ -271,7 +272,7 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                 return null;
             }
 
-            Colaborador colaborador = await _repository.BuscarColaboradorPorIdAsync(id);
+            Colaborador colaborador = await _repository.BuscarColaboradorComDireitosAsync(id);
             colaborador.Cpf = request.Cpf;
             colaborador.NomeCompleto = request.NomeCompleto;
             colaborador.DataNascimento = request.DataNascimento;
@@ -282,6 +283,8 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
             await _repository.EditarColaborador(colaborador);
 
             List<CriarEditarBeneficiarioDireitoResponseResumido> beneficiosResponse = new List<CriarEditarBeneficiarioDireitoResponseResumido>();
+
+            await _repository.ExcluirDireitosAsync(colaborador.DireitoColaborador.ToList());
 
             if (request.beneficios.Count > 0)
             {
@@ -296,17 +299,6 @@ namespace BoschCartaoDigitalBackEnd.Business.AreaAdministrativa
                     {
                         return null;
                     }
-
-                    //REMOVENDO TODOS OS DIREITOS PARA INSERIR NOVOS QUE ESTAO ATUALIZADOS
-                    List<Direito> direitos = await _repository.BuscarDireitoIdColaboradorIdEventoIdBeneficioAsync(colaborador.Id, (int)beneficio.EventoId, (int)beneficio.BeneficioId);
-                    if (direitos.Count > 0)
-                    {
-                        foreach (Direito direito in direitos)
-                        {
-                            await _repository.ExcluirDireitoAsync(direito);
-                        }
-                    }
-                    //REMOVENDO TODOS OS DIREITOS PARA INSERIR NOVOS QUE ESTAO ATUALIZADOS
 
                     if (beneficio.QtdBeneficio > 0)
                     {
